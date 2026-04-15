@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales History - Teller - Belize Bus Ticket System</title>
+    <link rel="stylesheet" href="../../css/styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <a href="../../index.html"><h1>Belize Bus</h1></a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="sales.html" class="active">Sales History</a></li>
+                <li><a href="#" class="btn-login">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="teller-sales-page">
+        <div class="container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h2>Sales History</h2>
+                <p>View and manage your ticket sales</p>
+            </div>
+
+            <!-- Filter Bar -->
+            <div class="filter-bar">
+                <div class="filter-search">
+                    <input type="text" id="search-input" class="search-input" placeholder="Search by reference or customer...">
+                </div>
+                <div class="filter-options">
+                    <div class="filter-option">
+                        <label>Date Range:</label>
+                        <select id="date-range" class="filter-select">
+                            <option value="today">Today</option>
+                            <option value="week" selected>This Week</option>
+                            <option value="month">This Month</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                    </div>
+                    <div class="filter-option">
+                        <label>Status:</label>
+                        <select id="status-filter" class="filter-select">
+                            <option value="">All Statuses</option>
+                            <option value="Booked">Booked</option>
+                            <option value="Confirmed">Confirmed</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" onclick="loadSales()">Refresh</button>
+                </div>
+            </div>
+
+            <!-- Custom Date Range (hidden by default) -->
+            <div id="custom-date-range" class="custom-date-range" style="display: none;">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="from-date">From Date:</label>
+                        <input type="date" id="from-date" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="to-date">To Date:</label>
+                        <input type="date" id="to-date" class="form-control">
+                    </div>
+                    <button class="btn btn-secondary" onclick="applyCustomDateRange()">Apply</button>
+                </div>
+            </div>
+
+            <!-- Summary Cards -->
+            <div class="summary-cards">
+                <div class="summary-card">
+                    <span class="summary-label">Total Sales</span>
+                    <span class="summary-value" id="total-sales-count">0</span>
+                </div>
+                <div class="summary-card">
+                    <span class="summary-label">Total Revenue</span>
+                    <span class="summary-value" id="total-revenue">$0.00</span>
+                </div>
+                <div class="summary-card">
+                    <span class="summary-label">Tickets Sold</span>
+                    <span class="summary-value" id="tickets-sold">0</span>
+                </div>
+                <div class="summary-card">
+                    <span class="summary-label">Commission Earned</span>
+                    <span class="summary-value" id="commission-earned">$0.00</span>
+                </div>
+            </div>
+
+            <!-- Sales Table -->
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Reference</th>
+                            <th>Customer</th>
+                            <th>Destination</th>
+                            <th>Travel Date</th>
+                            <th>Seats</th>
+                            <th>Total Price</th>
+                            <th>Status</th>
+                            <th>Sale Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sales-table-body">
+                        <tr>
+                            <td colspan="9" class="empty-state">
+                                <div class="loading-spinner"></div>
+                                <p>Loading sales history...</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div id="pagination" class="pagination-container"></div>
+        </div>
+    </main>
+
+    <!-- Sale Detail Modal -->
+    <div id="sale-modal" class="modal">
+        <div class="modal-overlay" data-modal-close></div>
+        <div class="modal-container modal-medium">
+            <div class="modal-header">
+                <h3>Sale Details</h3>
+                <button class="modal-close" data-modal-close>&times;</button>
+            </div>
+            <div class="modal-body" id="sale-modal-body">
+                <!-- Sale details will be populated here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" data-modal-close>Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Belize Bus</h3>
+                    <p>Your trusted partner for comfortable and reliable bus travel across Belize.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Teller Links</h3>
+                    <ul>
+                        <li><a href="dashboard.html">Dashboard</a></li>
+                        <li><a href="sales.html">Sales History</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <p>Email: info@belizebus.com</p>
+                    <p>Phone: +501-222-1234</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Belize Bus Ticket System. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../../js/api.js"></script>
+    <script src="../../js/auth.js"></script>
+    <script src="../../js/utils.js"></script>
+    <script src="../../js/components.js"></script>
+    <script>
+        let allSales = [];
+        let filteredSales = [];
+        let currentTeller = null;
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Require teller authentication
+            if (!Auth.requireRole(['Teller', 'Admin'])) return;
+
+            currentTeller = Auth.getCurrentUser();
+
+            // Setup logout handlers
+            document.querySelectorAll('.btn-login').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    await Auth.handleLogout();
+                });
+            });
+
+            // Setup date range selector
+            document.getElementById('date-range').addEventListener('change', handleDateRangeChange);
+
+            // Setup filters
+            document.getElementById('search-input').addEventListener('input', handleFilter);
+            document.getElementById('status-filter').addEventListener('change', handleFilter);
+
+            // Load sales
+            await loadSales();
+        });
+
+        function handleDateRangeChange() {
+            const customRange = document.getElementById('custom-date-range');
+            const dateRange = document.getElementById('date-range').value;
+            
+            if (dateRange === 'custom') {
+                customRange.style.display = 'block';
+                // Set default dates
+                const today = new Date().toISOString().split('T')[0];
+                const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+                document.getElementById('from-date').value = weekAgo;
+                document.getElementById('to-date').value = today;
+            } else {
+                customRange.style.display = 'none';
+                loadSales();
+            }
+        }
+
+        function applyCustomDateRange() {
+            loadSales();
+        }
+
+        async function loadSales() {
+            try {
+                const response = await API.teller.getSalesHistory(currentTeller.id, { limit: 50 });
+                
+                if (response.success && response.data) {
+                    allSales = response.data;
+                    filteredSales = [...allSales];
+                    displaySales(filteredSales);
+                    updateSummary(filteredSales);
+                } else {
+                    displaySales([]);
+                }
+            } catch (error) {
+                console.error('Failed to load sales:', error);
+                displaySales(getMockSalesData());
+            }
+        }
+
+        function displaySales(sales) {
+            const tbody = document.getElementById('sales-table-body');
+            tbody.innerHTML = '';
+
+            if (!sales || sales.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="9" class="empty-state">No sales found</td></tr>';
+                return;
+            }
+
+            sales.forEach(sale => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><span class="reference-link" onclick="viewSaleDetails(${sale.id})">${escapeHtml(sale.bookingReference || 'TKT-' + sale.id)}</span></td>
+                    <td>${escapeHtml(sale.customerName || 'Walk-in Customer')}</td>
+                    <td>${escapeHtml(sale.destination)}</td>
+                    <td>${formatDate(sale.travelDate)}</td>
+                    <td>${sale.numberOfSeats}</td>
+                    <td>${Utils.formatCurrency(sale.totalPrice)}</td>
+                    <td>${createStatusBadge(sale.status)}</td>
+                    <td>${formatDate(sale.saleDate || sale.createdAt)}</td>
+                    <td>
+                        <button class="btn btn-sm btn-secondary" onclick="viewSaleDetails(${sale.id})">View</button>
+                        ${sale.status === 'Booked' ? `<button class="btn btn-sm btn-success" onclick="confirmSale(${sale.id})">Confirm</button>` : ''}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function handleFilter() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const statusFilter = document.getElementById('status-filter').value;
+
+            filteredSales = allSales.filter(sale => {
+                const matchesSearch = !searchTerm || 
+                    (sale.bookingReference && sale.bookingReference.toLowerCase().includes(searchTerm)) ||
+                    (sale.customerName && sale.customerName.toLowerCase().includes(searchTerm));
+                
+                const matchesStatus = !statusFilter || sale.status === statusFilter;
+
+                return matchesSearch && matchesStatus;
+            });
+
+            displaySales(filteredSales);
+            updateSummary(filteredSales);
+        }
+
+        function updateSummary(sales) {
+            const totalSales = sales.length;
+            const totalRevenue = sales.reduce((sum, s) => sum + (s.totalPrice || 0), 0);
+            const totalTickets = sales.reduce((sum, s) => sum + (s.numberOfSeats || 0), 0);
+            const commission = totalRevenue * 0.05; // 5% commission rate
+
+            document.getElementById('total-sales-count').textContent = totalSales;
+            document.getElementById('total-revenue').textContent = Utils.formatCurrency(totalRevenue);
+            document.getElementById('tickets-sold').textContent = totalTickets;
+            document.getElementById('commission-earned').textContent = Utils.formatCurrency(commission);
+        }
+
+        function viewSaleDetails(saleId) {
+            const sale = allSales.find(s => s.id === saleId);
+            if (!sale) return;
+
+            const modalBody = document.getElementById('sale-modal-body');
+            modalBody.innerHTML = `
+                <div class="sale-detail">
+                    <div class="detail-header">
+                        <h4>${escapeHtml(sale.bookingReference || 'TKT-' + sale.id)}</h4>
+                        ${createStatusBadge(sale.status)}
+                    </div>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">Customer</span>
+                            <span class="detail-value">${escapeHtml(sale.customerName || 'Walk-in Customer')}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Destination</span>
+                            <span class="detail-value">${escapeHtml(sale.destination)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Travel Date</span>
+                            <span class="detail-value">${formatDate(sale.travelDate)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Number of Seats</span>
+                            <span class="detail-value">${sale.numberOfSeats}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Price Per Seat</span>
+                            <span class="detail-value">${Utils.formatCurrency(sale.pricePerSeat)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Total Price</span>
+                            <span class="detail-value price">${Utils.formatCurrency(sale.totalPrice)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Sale Date</span>
+                            <span class="detail-value">${formatDate(sale.saleDate || sale.createdAt)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Teller</span>
+                            <span class="detail-value">${escapeHtml(currentTeller.firstName)} ${escapeHtml(currentTeller.lastName)}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            Components.openModal(document.getElementById('sale-modal'));
+        }
+
+        async function confirmSale(saleId) {
+            if (!confirm('Confirm this ticket sale?')) return;
+
+            try {
+                const response = await API.ticket.confirmTicket(saleId);
+                
+                if (response.success) {
+                    Utils.showToast('Ticket confirmed successfully', 'success');
+                    await loadSales();
+                }
+            } catch (error) {
+                console.error('Confirm failed:', error);
+                Utils.showToast(error.message || 'Failed to confirm ticket', 'error');
+            }
+        }
+
+        function getMockSalesData() {
+            return [
+                { id: 1, bookingReference: 'BLZ-2026-ABC123', customerName: 'John Doe', 
+                  destination: 'San Ignacio', numberOfSeats: 2, totalPrice: 50.00, pricePerSeat: 25.00,
+                  status: 'Confirmed', travelDate: new Date(Date.now() + 86400000).toISOString(),
+                  saleDate: new Date().toISOString() },
+                { id: 2, bookingReference: 'BLZ-2026-DEF456', customerName: 'Maria Garcia', 
+                  destination: 'Belmopan', numberOfSeats: 1, totalPrice: 15.00, pricePerSeat: 15.00,
+                  status: 'Booked', travelDate: new Date(Date.now() + 172800000).toISOString(),
+                  saleDate: new Date(Date.now() - 86400000).toISOString() }
+            ];
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

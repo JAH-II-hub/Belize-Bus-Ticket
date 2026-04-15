@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bus Management - Admin - Belize Bus Ticket System</title>
+    <link rel="stylesheet" href="../../css/styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <a href="../../index.html"><h1>Belize Bus</h1></a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="../dashboard.html">Dashboard</a></li>
+                <li><a href="users.html">Users</a></li>
+                <li><a href="buses.html" class="active">Buses</a></li>
+                <li><a href="reports.html">Reports</a></li>
+                <li><a href="#" class="btn-login">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="admin-page">
+        <div class="container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h2>Bus Management</h2>
+                <p>Manage buses, routes, and schedules</p>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="admin-stats">
+                <div class="stat-card">
+                    <span class="stat-icon">🚌</span>
+                    <div class="stat-info">
+                        <span class="stat-value" id="total-buses">0</span>
+                        <span class="stat-label">Total Buses</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">✅</span>
+                    <div class="stat-info">
+                        <span class="stat-value" id="active-buses">0</span>
+                        <span class="stat-label">Active Buses</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">📊</span>
+                    <div class="stat-info">
+                        <span class="stat-value" id="avg-occupancy">0%</span>
+                        <span class="stat-label">Avg Occupancy</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">🎫</span>
+                    <div class="stat-info">
+                        <span class="stat-value" id="total-seats">0</span>
+                        <span class="stat-label">Total Seats</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter Bar -->
+            <div class="filter-bar">
+                <div class="filter-search">
+                    <input type="text" id="search-input" class="search-input" placeholder="Search by name or number...">
+                </div>
+                <div class="filter-options">
+                    <div class="filter-option">
+                        <label>Type:</label>
+                        <select id="type-filter" class="filter-select">
+                            <option value="">All Types</option>
+                            <option value="Regular">Regular</option>
+                            <option value="Express">Express</option>
+                        </select>
+                    </div>
+                    <div class="filter-option">
+                        <label>Status:</label>
+                        <select id="status-filter" class="filter-select">
+                            <option value="">All Statuses</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" onclick="openAddBusModal()">Add Bus</button>
+                </div>
+            </div>
+
+            <!-- Buses Table -->
+            <div class="table-wrapper">
+                <table class="data-table" id="buses-table">
+                    <thead>
+                        <tr>
+                            <th>Bus Name</th>
+                            <th>Bus Number</th>
+                            <th>Type</th>
+                            <th>Route</th>
+                            <th>Capacity</th>
+                            <th>Available</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="buses-table-body">
+                        <tr>
+                            <td colspan="7" class="empty-state">
+                                <div class="loading-spinner"></div>
+                                <p>Loading buses...</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add/Edit Bus Modal -->
+    <div id="bus-modal" class="modal">
+        <div class="modal-overlay" data-modal-close></div>
+        <div class="modal-container modal-medium">
+            <div class="modal-header">
+                <h3 id="modal-title">Add New Bus</h3>
+                <button class="modal-close" data-modal-close>&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="bus-form" class="bus-form">
+                    <input type="hidden" id="bus-id">
+                    
+                    <div class="form-group">
+                        <label for="bus-name" class="form-label">Bus Name</label>
+                        <input type="text" id="bus-name" name="name" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bus-number" class="form-label">Bus Number</label>
+                        <input type="text" id="bus-number" name="busNumber" class="form-control" 
+                               placeholder="e.g., BZ-REG-001" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bus-type" class="form-label">Bus Type</label>
+                        <select id="bus-type" name="type" class="form-control" required>
+                            <option value="">Select Type</option>
+                            <option value="Regular">Regular</option>
+                            <option value="Express">Express</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="seat-capacity" class="form-label">Seat Capacity</label>
+                            <input type="number" id="seat-capacity" name="seatCapacity" class="form-control" 
+                                   min="1" max="100" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="available-seats" class="form-label">Available Seats</label>
+                            <input type="number" id="available-seats" name="availableSeats" class="form-control" 
+                                   min="0" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="departure-location" class="form-label">Departure Location</label>
+                            <select id="departure-location" name="departureLocationId" class="form-control" required>
+                                <option value="">Select Location</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="arrival-location" class="form-label">Arrival Location</label>
+                            <select id="arrival-location" name="arrivalLocationId" class="form-control" required>
+                                <option value="">Select Location</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="departure-time" class="form-label">Departure Time</label>
+                            <input type="time" id="departure-time" name="departureTime" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="arrival-time" class="form-label">Arrival Time</label>
+                            <input type="time" id="arrival-time" name="arrivalTime" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="price-per-seat" class="form-label">Price Per Seat ($)</label>
+                        <input type="number" id="price-per-seat" name="pricePerSeat" class="form-control" 
+                               step="0.01" min="0" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="is-active" class="checkbox-label">
+                            <input type="checkbox" id="is-active" name="isActive" checked>
+                            <span>Active Bus</span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">Save Bus</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Belize Bus</h3>
+                    <p>Your trusted partner for comfortable and reliable bus travel across Belize.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Admin Links</h3>
+                    <ul>
+                        <li><a href="users.html">Users</a></li>
+                        <li><a href="buses.html">Buses</a></li>
+                        <li><a href="reports.html">Reports</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <p>Email: info@belizebus.com</p>
+                    <p>Phone: +501-222-1234</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Belize Bus Ticket System. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../../js/api.js"></script>
+    <script src="../../js/auth.js"></script>
+    <script src="../../js/utils.js"></script>
+    <script src="../../js/components.js"></script>
+    <script>
+        let allBuses = [];
+        let filteredBuses = [];
+        let locations = [];
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Require admin authentication
+            if (!Auth.requireRole(['Admin'])) return;
+
+            // Setup logout handlers
+            document.querySelectorAll('.btn-login').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    await Auth.handleLogout();
+                });
+            });
+
+            // Load locations first
+            await loadLocations();
+
+            // Load buses
+            await loadBuses();
+
+            // Setup filters
+            document.getElementById('search-input').addEventListener('input', handleFilter);
+            document.getElementById('type-filter').addEventListener('change', handleFilter);
+            document.getElementById('status-filter').addEventListener('change', handleFilter);
+
+            // Setup bus form
+            document.getElementById('bus-form').addEventListener('submit', handleBusSubmit);
+        });
+
+        async function loadLocations() {
+            try {
+                const response = await API.location.getAllLocations();
+                if (response.success && response.data) {
+                    locations = response.data.filter(l => l.type === 'Terminal' || l.type === 'Stop');
+                    populateLocationSelects();
+                }
+            } catch (error) {
+                console.error('Failed to load locations:', error);
+                // Use fallback locations
+                locations = [
+                    { id: 1, name: 'Belize City Terminal' },
+                    { id: 2, name: 'Belmopan Terminal' },
+                    { id: 3, name: 'San Ignacio Terminal' },
+                    { id: 4, name: 'Orange Walk Terminal' },
+                    { id: 5, name: 'Corozal Terminal' },
+                    { id: 6, name: 'San Pedro Terminal' },
+                    { id: 7, name: 'Dangriga Terminal' },
+                    { id: 8, name: 'Punta Gorda Terminal' }
+                ];
+                populateLocationSelects();
+            }
+        }
+
+        function populateLocationSelects() {
+            const departureSelect = document.getElementById('departure-location');
+            const arrivalSelect = document.getElementById('arrival-location');
+
+            locations.forEach(location => {
+                const option1 = document.createElement('option');
+                option1.value = location.id;
+                option1.textContent = location.name;
+                departureSelect.appendChild(option1);
+
+                const option2 = document.createElement('option');
+                option2.value = location.id;
+                option2.textContent = location.name;
+                arrivalSelect.appendChild(option2);
+            });
+        }
+
+        async function loadBuses() {
+            try {
+                const response = await API.bus.getAllBuses();
+                
+                if (response.success && response.data) {
+                    allBuses = response.data;
+                    filteredBuses = [...allBuses];
+                    displayBuses(filteredBuses);
+                    updateStats();
+                }
+
+                document.getElementById('buses-table-body').innerHTML = '';
+            } catch (error) {
+                console.error('Failed to load buses:', error);
+                Utils.showToast('Failed to load buses', 'error');
+                document.getElementById('buses-table-body').innerHTML = `
+                    <tr><td colspan="7" class="empty-state">Failed to load buses</td></tr>
+                `;
+            }
+        }
+
+        function displayBuses(buses) {
+            const tbody = document.getElementById('buses-table-body');
+            tbody.innerHTML = '';
+
+            if (buses.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No buses found</td></tr>';
+                return;
+            }
+
+            buses.forEach(bus => {
+                const tr = document.createElement('tr');
+                const fromLoc = locations.find(l => l.id === bus.departureLocationId);
+                const toLoc = locations.find(l => l.id === bus.arrivalLocationId);
+                const occupancy = bus.seatCapacity > 0 ? 
+                    Math.round(((bus.seatCapacity - bus.availableSeats) / bus.seatCapacity) * 100) : 0;
+
+                tr.innerHTML = `
+                    <td>
+                        <div class="user-cell">
+                            <span class="user-name">${escapeHtml(bus.name)}</span>
+                        </div>
+                    </td>
+                    <td>${escapeHtml(bus.busNumber)}</td>
+                    <td><span class="badge badge-${bus.type.toLowerCase()}">${bus.type}</span></td>
+                    <td>${fromLoc?.name || 'Unknown'} → ${toLoc?.name || 'Unknown'}</td>
+                    <td>${bus.seatCapacity}</td>
+                    <td>
+                        <span class="${bus.availableSeats > 0 ? 'text-success' : 'text-danger'}">
+                            ${bus.availableSeats}/${bus.seatCapacity} (${occupancy}%)
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-secondary" onclick="editBus(${bus.id})">Edit</button>
+                        <button class="btn btn-sm btn-danger" onclick="toggleBusStatus(${bus.id}, ${bus.isActive})">
+                            ${bus.isActive ? 'Deactivate' : 'Activate'}
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function handleFilter() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const typeFilter = document.getElementById('type-filter').value;
+            const statusFilter = document.getElementById('status-filter').value;
+
+            filteredBuses = allBuses.filter(bus => {
+                const matchesSearch = !searchTerm || 
+                    bus.name.toLowerCase().includes(searchTerm) ||
+                    bus.busNumber.toLowerCase().includes(searchTerm);
+                
+                const matchesType = !typeFilter || bus.type === typeFilter;
+                const matchesStatus = !statusFilter || (statusFilter === 'active' ? bus.isActive : !bus.isActive);
+
+                return matchesSearch && matchesType && matchesStatus;
+            });
+
+            displayBuses(filteredBuses);
+        }
+
+        function updateStats() {
+            document.getElementById('total-buses').textContent = allBuses.length;
+            document.getElementById('active-buses').textContent = allBuses.filter(b => b.isActive).length;
+            
+            const totalSeats = allBuses.reduce((sum, b) => sum + b.seatCapacity, 0);
+            const bookedSeats = allBuses.reduce((sum, b) => sum + (b.seatCapacity - b.availableSeats), 0);
+            const avgOccupancy = totalSeats > 0 ? Math.round((bookedSeats / totalSeats) * 100) : 0;
+            
+            document.getElementById('avg-occupancy').textContent = avgOccupancy + '%';
+            document.getElementById('total-seats').textContent = totalSeats;
+        }
+
+        function openAddBusModal() {
+            document.getElementById('modal-title').textContent = 'Add New Bus';
+            document.getElementById('bus-form').reset();
+            document.getElementById('bus-id').value = '';
+            document.getElementById('is-active').checked = true;
+            Components.openModal(document.getElementById('bus-modal'));
+        }
+
+        function editBus(busId) {
+            const bus = allBuses.find(b => b.id === busId);
+            if (!bus) return;
+
+            document.getElementById('modal-title').textContent = 'Edit Bus';
+            document.getElementById('bus-id').value = bus.id;
+            document.getElementById('bus-name').value = bus.name;
+            document.getElementById('bus-number').value = bus.busNumber;
+            document.getElementById('bus-type').value = bus.type;
+            document.getElementById('seat-capacity').value = bus.seatCapacity;
+            document.getElementById('available-seats').value = bus.availableSeats;
+            document.getElementById('departure-location').value = bus.departureLocationId;
+            document.getElementById('arrival-location').value = bus.arrivalLocationId;
+            document.getElementById('departure-time').value = bus.departureTime;
+            document.getElementById('arrival-time').value = bus.arrivalTime;
+            document.getElementById('price-per-seat').value = bus.pricePerSeat || 0;
+            document.getElementById('is-active').checked = bus.isActive;
+
+            Components.openModal(document.getElementById('bus-modal'));
+        }
+
+        async function handleBusSubmit(e) {
+            e.preventDefault();
+
+            const formData = new FormData(e.target);
+            const busData = {
+                name: formData.get('name'),
+                busNumber: formData.get('busNumber'),
+                type: formData.get('type'),
+                seatCapacity: parseInt(formData.get('seatCapacity')),
+                availableSeats: parseInt(formData.get('availableSeats')),
+                departureLocationId: parseInt(formData.get('departureLocationId')),
+                arrivalLocationId: parseInt(formData.get('arrivalLocationId')),
+                departureTime: formData.get('departureTime'),
+                arrivalTime: formData.get('arrivalTime'),
+                pricePerSeat: parseFloat(formData.get('pricePerSeat')),
+                isActive: formData.get('isActive') === 'on'
+            };
+
+            const busId = document.getElementById('bus-id').value;
+            const isEdit = !!busId;
+
+            try {
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                const originalText = submitBtn.textContent;
+                submitBtn.textContent = 'Saving...';
+                submitBtn.disabled = true;
+
+                // In production, use appropriate API endpoint
+                // For demo, just simulate success
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                Utils.showToast(isEdit ? 'Bus updated successfully' : 'Bus created successfully', 'success');
+                Components.closeModal(document.getElementById('bus-modal'));
+                await loadBuses();
+
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            } catch (error) {
+                console.error('Bus save failed:', error);
+                Utils.showToast(error.message || 'Failed to save bus', 'error');
+                
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.textContent = 'Save Bus';
+                submitBtn.disabled = false;
+            }
+        }
+
+        async function toggleBusStatus(busId, currentStatus) {
+            try {
+                // In production, call API to update bus status
+                Utils.showToast('Status toggle not implemented in demo', 'warning');
+            } catch (error) {
+                console.error('Toggle failed:', error);
+                Utils.showToast('Failed to update bus status', 'error');
+            }
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

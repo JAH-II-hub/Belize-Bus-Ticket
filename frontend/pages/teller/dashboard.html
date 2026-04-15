@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teller Dashboard - Belize Bus Ticket System</title>
+    <link rel="stylesheet" href="../../css/styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <a href="../../index.html"><h1>Belize Bus</h1></a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="dashboard.html" class="active">Dashboard</a></li>
+                <li><a href="sales.html">Sales History</a></li>
+                <li><a href="#" class="btn-login">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="teller-dashboard">
+        <div class="container">
+            <!-- Welcome Section -->
+            <div class="welcome-section">
+                <h2>Welcome, <span class="user-name">Loading...</span></h2>
+                <p>Teller Dashboard - Sell tickets and manage your sales</p>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="admin-stats">
+                <div class="stat-card">
+                    <span class="stat-icon">🎫</span>
+                    <div class="stat-info">
+                        <span class="stat-value" id="today-sales">0</span>
+                        <span class="stat-label">Today's Sales</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">💰</span>
+                    <div class="stat-info">
+                        <span class="stat-value" id="today-revenue">$0.00</span>
+                        <span class="stat-label">Today's Revenue</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">📊</span>
+                    <div class="stat-info">
+                        <span class="stat-value" id="week-sales">0</span>
+                        <span class="stat-label">This Week</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">🏆</span>
+                    <div class="stat-info">
+                        <span class="stat-value" id="commission">$0.00</span>
+                        <span class="stat-label">Commission Earned</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Sell Section -->
+            <div class="quick-sell-section">
+                <h3>Quick Ticket Sale</h3>
+                <form id="quick-sell-form" class="quick-sell-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="customer-email" class="form-label">Customer Email (Optional)</label>
+                            <input type="email" id="customer-email" name="customerEmail" class="form-control" 
+                                   placeholder="Customer email for lookup">
+                        </div>
+                        <div class="form-group">
+                            <label for="qs-bus" class="form-label">Select Bus</label>
+                            <select id="qs-bus" name="busId" class="form-control" required>
+                                <option value="">Select a bus</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="qs-seats" class="form-label">Number of Seats</label>
+                            <input type="number" id="qs-seats" name="numberOfSeats" class="form-control" 
+                                   min="1" max="10" value="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="qs-destination" class="form-label">Destination</label>
+                            <input type="text" id="qs-destination" name="destination" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="qs-travel-date" class="form-label">Travel Date</label>
+                            <input type="date" id="qs-travel-date" name="travelDate" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="qs-price" class="form-label">Price Per Seat ($)</label>
+                            <input type="number" id="qs-price" name="pricePerSeat" class="form-control" 
+                                   step="0.01" min="0" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Sell Ticket</button>
+                </form>
+            </div>
+
+            <!-- Recent Sales -->
+            <div class="recent-sales-section">
+                <h3>Recent Sales</h3>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Reference</th>
+                                <th>Customer</th>
+                                <th>Destination</th>
+                                <th>Seats</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recent-sales-body">
+                            <tr>
+                                <td colspan="7" class="empty-state">
+                                    <div class="loading-spinner"></div>
+                                    <p>Loading recent sales...</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Belize Bus</h3>
+                    <p>Your trusted partner for comfortable and reliable bus travel across Belize.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Teller Links</h3>
+                    <ul>
+                        <li><a href="dashboard.html">Dashboard</a></li>
+                        <li><a href="sales.html">Sales History</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <p>Email: info@belizebus.com</p>
+                    <p>Phone: +501-222-1234</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Belize Bus Ticket System. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../../js/api.js"></script>
+    <script src="../../js/auth.js"></script>
+    <script src="../../js/utils.js"></script>
+    <script src="../../js/components.js"></script>
+    <script>
+        let currentTeller = null;
+        let availableBuses = [];
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Require teller authentication
+            if (!Auth.requireRole(['Teller', 'Admin'])) return;
+
+            // Get current user
+            currentTeller = Auth.getCurrentUser();
+            
+            // Update UI with user info
+            document.querySelectorAll('.user-name').forEach(el => {
+                el.textContent = `${currentTeller.firstName} ${currentTeller.lastName}`;
+            });
+
+            // Setup logout handlers
+            document.querySelectorAll('.btn-login').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    await Auth.handleLogout();
+                });
+            });
+
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('qs-travel-date').setAttribute('min', today);
+
+            // Load buses for dropdown
+            await loadBuses();
+
+            // Load recent sales
+            await loadRecentSales();
+
+            // Load stats
+            await loadStats();
+
+            // Setup form handler
+            document.getElementById('quick-sell-form').addEventListener('submit', handleQuickSell);
+        });
+
+        async function loadBuses() {
+            try {
+                const response = await API.bus.getAllBuses({ isActive: true });
+                
+                if (response.success && response.data) {
+                    availableBuses = response.data;
+                    populateBusSelect();
+                }
+            } catch (error) {
+                console.error('Failed to load buses:', error);
+                // Use mock data for demo
+                availableBuses = [
+                    { id: 1, name: 'Express VIP 1', busNumber: 'BE-001', pricePerSeat: 25.00 },
+                    { id: 2, name: 'Regular Express 2', busNumber: 'BZ-REG-002', pricePerSeat: 15.00 },
+                    { id: 3, name: 'Coastal Runner', busNumber: 'BZ-REG-005', pricePerSeat: 30.00 }
+                ];
+                populateBusSelect();
+            }
+        }
+
+        function populateBusSelect() {
+            const select = document.getElementById('qs-bus');
+            select.innerHTML = '<option value="">Select a bus</option>';
+            
+            availableBuses.forEach(bus => {
+                const option = document.createElement('option');
+                option.value = bus.id;
+                option.textContent = `${bus.name} (${bus.busNumber}) - $${bus.pricePerSeat || 0}`;
+                option.dataset.price = bus.pricePerSeat || 0;
+                select.appendChild(option);
+            });
+
+            // Auto-fill price when bus is selected
+            select.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                if (selectedOption.dataset.price) {
+                    document.getElementById('qs-price').value = selectedOption.dataset.price;
+                }
+            });
+        }
+
+        async function loadStats() {
+            try {
+                const response = await API.report.getSalesSummary({ tellerId: currentTeller.id });
+                
+                if (response.success && response.data) {
+                    const stats = response.data;
+                    document.getElementById('today-sales').textContent = stats.todaySales || 0;
+                    document.getElementById('today-revenue').textContent = Utils.formatCurrency(stats.todayRevenue || 0);
+                    document.getElementById('week-sales').textContent = stats.weekSales || 0;
+                    document.getElementById('commission').textContent = Utils.formatCurrency(stats.commissionEarned || 0);
+                } else {
+                    // Mock data for demo
+                    document.getElementById('today-sales').textContent = '12';
+                    document.getElementById('today-revenue').textContent = '$360.00';
+                    document.getElementById('week-sales').textContent = '78';
+                    document.getElementById('commission').textContent = '$19.50';
+                }
+            } catch (error) {
+                console.error('Failed to load stats:', error);
+            }
+        }
+
+        async function loadRecentSales() {
+            try {
+                const response = await API.teller.getSalesHistory(currentTeller.id, { limit: 10 });
+                
+                if (response.success && response.data) {
+                    displayRecentSales(response.data);
+                } else {
+                    displayRecentSales(getMockSalesData());
+                }
+            } catch (error) {
+                console.error('Failed to load sales:', error);
+                displayRecentSales(getMockSalesData());
+            }
+        }
+
+        function displayRecentSales(sales) {
+            const tbody = document.getElementById('recent-sales-body');
+            tbody.innerHTML = '';
+
+            if (!sales || sales.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No recent sales</td></tr>';
+                return;
+            }
+
+            sales.forEach(sale => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${escapeHtml(sale.bookingReference || 'TKT-' + sale.id)}</td>
+                    <td>${escapeHtml(sale.customerName || 'Walk-in Customer')}</td>
+                    <td>${escapeHtml(sale.destination)}</td>
+                    <td>${sale.numberOfSeats}</td>
+                    <td>${Utils.formatCurrency(sale.totalPrice)}</td>
+                    <td>${createStatusBadge(sale.status)}</td>
+                    <td>${Utils.formatDate(sale.saleDate || sale.createdAt)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function getMockSalesData() {
+            return [
+                { id: 1, bookingReference: 'BLZ-2026-ABC123', customerName: 'John Doe', 
+                  destination: 'San Ignacio', numberOfSeats: 2, totalPrice: 50.00, status: 'Confirmed',
+                  saleDate: new Date().toISOString() },
+                { id: 2, bookingReference: 'BLZ-2026-DEF456', customerName: 'Maria Garcia', 
+                  destination: 'Belmopan', numberOfSeats: 1, totalPrice: 15.00, status: 'Booked',
+                  saleDate: new Date(Date.now() - 86400000).toISOString() }
+            ];
+        }
+
+        async function handleQuickSell(e) {
+            e.preventDefault();
+
+            const formData = new FormData(e.target);
+            const ticketData = {
+                busId: parseInt(formData.get('busId')),
+                customerId: currentTeller.id, // In production, look up customer by email
+                destination: formData.get('destination'),
+                travelDate: formData.get('travelDate'),
+                numberOfSeats: parseInt(formData.get('numberOfSeats')),
+                pricePerSeat: parseFloat(formData.get('pricePerSeat')),
+                tellerId: currentTeller.id
+            };
+
+            ticketData.totalPrice = ticketData.numberOfSeats * ticketData.pricePerSeat;
+
+            try {
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                const originalText = submitBtn.textContent;
+                submitBtn.textContent = 'Processing...';
+                submitBtn.disabled = true;
+
+                const response = await API.ticket.bookTicket(ticketData);
+
+                if (response.success) {
+                    Utils.showToast('Ticket sold successfully! Reference: ' + (response.data?.bookingReference || 'N/A'), 'success');
+                    e.target.reset();
+                    
+                    // Refresh stats and recent sales
+                    await loadStats();
+                    await loadRecentSales();
+                }
+
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            } catch (error) {
+                console.error('Sale failed:', error);
+                Utils.showToast(error.message || 'Failed to sell ticket', 'error');
+                
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.textContent = 'Sell Ticket';
+                submitBtn.disabled = false;
+            }
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

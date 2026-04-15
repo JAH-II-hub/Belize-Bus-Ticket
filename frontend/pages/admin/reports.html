@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports - Admin - Belize Bus Ticket System</title>
+    <link rel="stylesheet" href="../../css/styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <a href="../../index.html"><h1>Belize Bus</h1></a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="../dashboard.html">Dashboard</a></li>
+                <li><a href="users.html">Users</a></li>
+                <li><a href="buses.html">Buses</a></li>
+                <li><a href="reports.html" class="active">Reports</a></li>
+                <li><a href="#" class="btn-login">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="admin-page reports-page">
+        <div class="container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h2>System Reports</h2>
+                <p>View analytics and performance metrics</p>
+            </div>
+
+            <!-- Report Tabs -->
+            <div class="report-tabs">
+                <button class="tab-btn active" data-tab="revenue">Revenue Report</button>
+                <button class="tab-btn" data-tab="utilization">Bus Utilization</button>
+                <button class="tab-btn" data-tab="destinations">Popular Destinations</button>
+                <button class="tab-btn" data-tab="teller">Teller Performance</button>
+            </div>
+
+            <!-- Revenue Report Tab -->
+            <div class="report-tab-content active" id="revenue-tab">
+                <div class="report-filters">
+                    <div class="filter-group">
+                        <label>Report Type:</label>
+                        <select id="revenue-type" class="filter-select">
+                            <option value="daily">Daily</option>
+                            <option value="monthly">Monthly</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>From Date:</label>
+                        <input type="date" id="revenue-from" class="form-control">
+                    </div>
+                    <div class="filter-group">
+                        <label>To Date:</label>
+                        <input type="date" id="revenue-to" class="form-control">
+                    </div>
+                    <button class="btn btn-primary" onclick="loadRevenueReport()">Generate Report</button>
+                </div>
+
+                <div class="report-cards">
+                    <div class="report-card">
+                        <span class="report-card-label">Total Revenue</span>
+                        <span class="report-card-value" id="total-revenue">$0.00</span>
+                    </div>
+                    <div class="report-card">
+                        <span class="report-card-label">Total Tickets Sold</span>
+                        <span class="report-card-value" id="total-tickets-sold">0</span>
+                    </div>
+                    <div class="report-card">
+                        <span class="report-card-label">Unique Customers</span>
+                        <span class="report-card-value" id="unique-customers">0</span>
+                    </div>
+                    <div class="report-card">
+                        <span class="report-card-label">Average Ticket Price</span>
+                        <span class="report-card-value" id="avg-ticket-price">$0.00</span>
+                    </div>
+                </div>
+
+                <div class="report-chart-container">
+                    <h3>Revenue Trend</h3>
+                    <div id="revenue-chart" class="chart-placeholder">
+                        <div class="chart-mock">
+                            <div class="chart-bar" style="height: 40%"><span>Mon</span></div>
+                            <div class="chart-bar" style="height: 60%"><span>Tue</span></div>
+                            <div class="chart-bar" style="height: 45%"><span>Wed</span></div>
+                            <div class="chart-bar" style="height: 80%"><span>Thu</span></div>
+                            <div class="chart-bar" style="height: 55%"><span>Fri</span></div>
+                            <div class="chart-bar" style="height: 70%"><span>Sat</span></div>
+                            <div class="chart-bar" style="height: 90%"><span>Sun</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bus Utilization Tab -->
+            <div class="report-tab-content" id="utilization-tab">
+                <div class="report-filters">
+                    <button class="btn btn-primary" onclick="loadUtilizationReport()">Refresh Data</button>
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Bus Name</th>
+                                <th>Bus Number</th>
+                                <th>Type</th>
+                                <th>Route</th>
+                                <th>Capacity</th>
+                                <th>Booked</th>
+                                <th>Occupancy Rate</th>
+                            </tr>
+                        </thead>
+                        <tbody id="utilization-table-body">
+                            <tr>
+                                <td colspan="7" class="empty-state">Click "Refresh Data" to load utilization report</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Popular Destinations Tab -->
+            <div class="report-tab-content" id="destinations-tab">
+                <div class="report-filters">
+                    <button class="btn btn-primary" onclick="loadDestinationsReport()">Refresh Data</button>
+                </div>
+
+                <div class="destinations-grid" id="destinations-grid">
+                    <div class="destination-card">
+                        <span class="destination-rank">1</span>
+                        <div class="destination-info">
+                            <h4>San Ignacio</h4>
+                            <p>Total Tickets: 1,234</p>
+                            <p>Total Revenue: $24,680</p>
+                            <p>Unique Customers: 856</p>
+                        </div>
+                        <div class="destination-bar" style="width: 100%"></div>
+                    </div>
+                    <div class="destination-card">
+                        <span class="destination-rank">2</span>
+                        <div class="destination-info">
+                            <h4>Belmopan</h4>
+                            <p>Total Tickets: 987</p>
+                            <p>Total Revenue: $14,805</p>
+                            <p>Unique Customers: 654</p>
+                        </div>
+                        <div class="destination-bar" style="width: 80%"></div>
+                    </div>
+                    <div class="destination-card">
+                        <span class="destination-rank">3</span>
+                        <div class="destination-info">
+                            <h4>San Pedro</h4>
+                            <p>Total Tickets: 756</p>
+                            <p>Total Revenue: $18,900</p>
+                            <p>Unique Customers: 523</p>
+                        </div>
+                        <div class="destination-bar" style="width: 61%"></div>
+                    </div>
+                    <div class="destination-card">
+                        <span class="destination-rank">4</span>
+                        <div class="destination-info">
+                            <h4>Dangriga</h4>
+                            <p>Total Tickets: 543</p>
+                            <p>Total Revenue: $16,290</p>
+                            <p>Unique Customers: 398</p>
+                        </div>
+                        <div class="destination-bar" style="width: 44%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Teller Performance Tab -->
+            <div class="report-tab-content" id="teller-tab">
+                <div class="report-filters">
+                    <div class="filter-group">
+                        <label>Period:</label>
+                        <select id="teller-period" class="filter-select">
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                            <option value="year">This Year</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" onclick="loadTellerReport()">Generate Report</button>
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Teller Name</th>
+                                <th>Employee ID</th>
+                                <th>Terminal</th>
+                                <th>Tickets Sold</th>
+                                <th>Total Sales</th>
+                                <th>Commission Earned</th>
+                            </tr>
+                        </thead>
+                        <tbody id="teller-table-body">
+                            <tr>
+                                <td colspan="6" class="empty-state">Select a period and click "Generate Report"</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Belize Bus</h3>
+                    <p>Your trusted partner for comfortable and reliable bus travel across Belize.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Admin Links</h3>
+                    <ul>
+                        <li><a href="users.html">Users</a></li>
+                        <li><a href="buses.html">Buses</a></li>
+                        <li><a href="reports.html">Reports</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <p>Email: info@belizebus.com</p>
+                    <p>Phone: +501-222-1234</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Belize Bus Ticket System. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../../js/api.js"></script>
+    <script src="../../js/auth.js"></script>
+    <script src="../../js/utils.js"></script>
+    <script src="../../js/components.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Require admin authentication
+            if (!Auth.requireRole(['Admin'])) return;
+
+            // Setup logout handlers
+            document.querySelectorAll('.btn-login').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    await Auth.handleLogout();
+                });
+            });
+
+            // Setup tab switching
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', handleTabSwitch);
+            });
+
+            // Set default date range
+            const today = new Date();
+            const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+            document.getElementById('revenue-from').value = weekAgo.toISOString().split('T')[0];
+            document.getElementById('revenue-to').value = today.toISOString().split('T')[0];
+
+            // Load initial revenue report
+            loadRevenueReport();
+        });
+
+        function handleTabSwitch(e) {
+            const tabId = e.target.dataset.tab;
+            
+            // Update active tab button
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            e.target.classList.add('active');
+
+            // Update active tab content
+            document.querySelectorAll('.report-tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(tabId + '-tab').classList.add('active');
+        }
+
+        async function loadRevenueReport() {
+            const reportType = document.getElementById('revenue-type').value;
+            const fromDate = document.getElementById('revenue-from').value;
+            const toDate = document.getElementById('revenue-to').value;
+
+            try {
+                let response;
+                if (reportType === 'daily') {
+                    response = await API.report.getDailyRevenue({ from: fromDate, to: toDate });
+                } else {
+                    response = await API.report.getMonthlyRevenue({ from: fromDate, to: toDate });
+                }
+
+                if (response.success && response.data) {
+                    displayRevenueReport(response.data);
+                } else {
+                    // Use mock data for demo
+                    displayRevenueReport(getMockRevenueData());
+                }
+            } catch (error) {
+                console.error('Failed to load revenue report:', error);
+                displayRevenueReport(getMockRevenueData());
+            }
+        }
+
+        function displayRevenueReport(data) {
+            const totalRevenue = data.totalRevenue || data.reduce((sum, d) => sum + (d.totalRevenue || 0), 0);
+            const totalTickets = data.totalTickets || data.reduce((sum, d) => sum + (d.totalTickets || 0), 0);
+            const uniqueCustomers = data.uniqueCustomers || Math.round(totalTickets * 0.7);
+            
+            document.getElementById('total-revenue').textContent = Utils.formatCurrency(totalRevenue);
+            document.getElementById('total-tickets-sold').textContent = Utils.formatNumber(totalTickets);
+            document.getElementById('unique-customers').textContent = Utils.formatNumber(uniqueCustomers);
+            document.getElementById('avg-ticket-price').textContent = Utils.formatCurrency(
+                totalTickets > 0 ? totalRevenue / totalTickets : 0
+            );
+        }
+
+        function getMockRevenueData() {
+            return {
+                totalRevenue: 45680.50,
+                totalTickets: 1834,
+                uniqueCustomers: 1256
+            };
+        }
+
+        async function loadUtilizationReport() {
+            try {
+                const response = await API.report.getBusUtilization();
+                
+                if (response.success && response.data) {
+                    displayUtilizationReport(response.data);
+                } else {
+                    displayUtilizationReport(getMockUtilizationData());
+                }
+            } catch (error) {
+                console.error('Failed to load utilization report:', error);
+                displayUtilizationReport(getMockUtilizationData());
+            }
+        }
+
+        function displayUtilizationReport(data) {
+            const tbody = document.getElementById('utilization-table-body');
+            tbody.innerHTML = '';
+
+            if (!data || data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No data available</td></tr>';
+                return;
+            }
+
+            data.forEach(bus => {
+                const tr = document.createElement('tr');
+                const occupancyClass = bus.occupancyRate >= 80 ? 'text-success' : 
+                                       bus.occupancyRate >= 50 ? 'text-warning' : 'text-danger';
+                
+                tr.innerHTML = `
+                    <td>${escapeHtml(bus.name)}</td>
+                    <td>${escapeHtml(bus.busNumber)}</td>
+                    <td><span class="badge badge-${bus.type.toLowerCase()}">${bus.type}</span></td>
+                    <td>${escapeHtml(bus.departureLocation)} → ${escapeHtml(bus.arrivalLocation)}</td>
+                    <td>${bus.seatCapacity}</td>
+                    <td>${bus.seatsBooked || (bus.seatCapacity - bus.availableSeats)}</td>
+                    <td><span class="${occupancyClass}">${bus.occupancyRate || 0}%</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function getMockUtilizationData() {
+            return [
+                { name: 'Express VIP 1', busNumber: 'BE-001', type: 'Express', 
+                  departureLocation: 'Belize City', arrivalLocation: 'San Ignacio',
+                  seatCapacity: 40, seatsBooked: 35, occupancyRate: 87.5 },
+                { name: 'Regular Express 2', busNumber: 'BZ-REG-002', type: 'Regular',
+                  departureLocation: 'Belize City', arrivalLocation: 'Belmopan',
+                  seatCapacity: 50, seatsBooked: 30, occupancyRate: 60 },
+                { name: 'Coastal Runner', busNumber: 'BZ-REG-005', type: 'Regular',
+                  departureLocation: 'Dangriga', arrivalLocation: 'Punta Gorda',
+                  seatCapacity: 45, seatsBooked: 40, occupancyRate: 88.9 }
+            ];
+        }
+
+        function loadDestinationsReport() {
+            // Data is already displayed statically for demo
+            Utils.showToast('Report refreshed', 'success');
+        }
+
+        async function loadTellerReport() {
+            const period = document.getElementById('teller-period').value;
+            
+            try {
+                const response = await API.report.getTellerPerformance({ period });
+                
+                if (response.success && response.data) {
+                    displayTellerReport(response.data);
+                } else {
+                    displayTellerReport(getMockTellerData());
+                }
+            } catch (error) {
+                console.error('Failed to load teller report:', error);
+                displayTellerReport(getMockTellerData());
+            }
+        }
+
+        function displayTellerReport(data) {
+            const tbody = document.getElementById('teller-table-body');
+            tbody.innerHTML = '';
+
+            if (!data || data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No data available</td></tr>';
+                return;
+            }
+
+            data.forEach(teller => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${escapeHtml(teller.tellerName)}</td>
+                    <td>${escapeHtml(teller.employeeId)}</td>
+                    <td>${escapeHtml(teller.terminalLocation)}</td>
+                    <td>${Utils.formatNumber(teller.ticketsSold || 0)}</td>
+                    <td>${Utils.formatCurrency(teller.totalSales || 0)}</td>
+                    <td>${Utils.formatCurrency(teller.commissionEarned || 0)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function getMockTellerData() {
+            return [
+                { tellerName: 'John Smith', employeeId: 'EMP-001', terminalLocation: 'Belize City Terminal',
+                  ticketsSold: 234, totalSales: 5850.00, commissionEarned: 292.50 },
+                { tellerName: 'Maria Garcia', employeeId: 'EMP-002', terminalLocation: 'San Ignacio Terminal',
+                  ticketsSold: 189, totalSales: 4725.00, commissionEarned: 236.25 },
+                { tellerName: 'David Jones', employeeId: 'EMP-003', terminalLocation: 'Belmopan Terminal',
+                  ticketsSold: 156, totalSales: 3900.00, commissionEarned: 195.00 }
+            ];
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

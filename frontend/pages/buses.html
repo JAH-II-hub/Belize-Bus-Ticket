@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Buses - Belize Bus Ticket System</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <a href="../index.html"><h1>Belize Bus</h1></a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="buses.html" class="active">Search Buses</a></li>
+                <li><a href="tickets.html">My Tickets</a></li>
+                <li><a href="profile.html">Profile</a></li>
+                <li><a href="#" class="btn-login">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="buses-page">
+        <div class="container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h2>Search Available Buses</h2>
+                <p>Find and book your perfect journey</p>
+            </div>
+
+            <!-- Search Form -->
+            <div class="search-section">
+                <form id="search-form" class="search-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="from-location" class="form-label">From</label>
+                            <select id="from-location" name="from" class="form-control" required>
+                                <option value="">Select departure location</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="to-location" class="form-label">To</label>
+                            <select id="to-location" name="to" class="form-control" required>
+                                <option value="">Select destination</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="travel-date" class="form-label">Travel Date</label>
+                            <input type="date" id="travel-date" name="date" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="bus-type" class="form-label">Bus Type</label>
+                            <select id="bus-type" name="type" class="form-control">
+                                <option value="">All Types</option>
+                                <option value="Regular">Regular</option>
+                                <option value="Express">Express</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Search Buses</button>
+                </form>
+            </div>
+
+            <!-- Results Section -->
+            <div id="results-section" class="results-section" style="display: none;">
+                <div class="results-header">
+                    <h3>Available Buses</h3>
+                    <span id="results-count" class="results-count"></span>
+                </div>
+                <div id="bus-results" class="bus-results">
+                    <!-- Bus cards will be populated here -->
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loading-state" class="loading-state" style="display: none;">
+                <div class="loading-spinner"></div>
+                <p>Searching for available buses...</p>
+            </div>
+
+            <!-- Empty State -->
+            <div id="empty-state" class="empty-state" style="display: none;">
+                <div class="empty-icon">🚌</div>
+                <h3>No buses found</h3>
+                <p>Try adjusting your search criteria or select a different date.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Booking Modal -->
+    <div id="booking-modal" class="modal">
+        <div class="modal-overlay" data-modal-close></div>
+        <div class="modal-container modal-medium">
+            <div class="modal-header">
+                <h3>Book Your Ticket</h3>
+                <button class="modal-close" data-modal-close>&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="booking-form" class="booking-form">
+                    <input type="hidden" id="selected-bus-id">
+                    
+                    <div class="bus-summary">
+                        <h4 id="modal-bus-name"></h4>
+                        <p id="modal-bus-route"></p>
+                        <p class="modal-bus-price" id="modal-bus-price"></p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="seats" class="form-label">Number of Seats</label>
+                        <input type="number" id="seats" name="seats" class="form-control" 
+                               min="1" max="10" value="1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="seat-numbers" class="form-label">Seat Numbers (Optional)</label>
+                        <input type="text" id="seat-numbers" name="seatNumbers" class="form-control" 
+                               placeholder="e.g., A1, A2, A3">
+                        <small class="form-help">Leave blank for auto-assignment</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="is-round-trip" class="checkbox-label">
+                            <input type="checkbox" id="is-round-trip" name="isRoundTrip">
+                            <span>Round Trip</span>
+                        </label>
+                    </div>
+
+                    <div class="form-group" id="return-date-group" style="display: none;">
+                        <label for="return-date" class="form-label">Return Date</label>
+                        <input type="date" id="return-date" name="returnDate" class="form-control">
+                    </div>
+
+                    <div class="booking-total">
+                        <span>Total:</span>
+                        <span id="booking-total" class="total-price">$0.00</span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">Confirm Booking</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Belize Bus</h3>
+                    <p>Your trusted partner for comfortable and reliable bus travel across Belize.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="../index.html">Home</a></li>
+                        <li><a href="tickets.html">My Tickets</a></li>
+                        <li><a href="profile.html">Profile</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <p>Email: info@belizebus.com</p>
+                    <p>Phone: +501-222-1234</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Belize Bus Ticket System. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/components.js"></script>
+    <script>
+        let locations = [];
+        let selectedBus = null;
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Require authentication
+            if (!Auth.requireAuth()) return;
+
+            // Setup logout handlers
+            document.querySelectorAll('.btn-login').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    await Auth.handleLogout();
+                });
+            });
+
+            // Set minimum date to tomorrow
+            const minDate = Utils.getMinBookingDate();
+            document.getElementById('travel-date').setAttribute('min', minDate);
+
+            // Load locations
+            await loadLocations();
+
+            // Setup search form
+            document.getElementById('search-form').addEventListener('submit', handleSearch);
+
+            // Setup booking form
+            document.getElementById('booking-form').addEventListener('submit', handleBooking);
+
+            // Round trip toggle
+            document.getElementById('is-round-trip').addEventListener('change', function() {
+                document.getElementById('return-date-group').style.display = this.checked ? 'block' : 'none';
+                if (this.checked) {
+                    document.getElementById('return-date').setAttribute('min', minDate);
+                }
+            });
+
+            // Seats change handler for total calculation
+            document.getElementById('seats').addEventListener('input', updateBookingTotal);
+        });
+
+        async function loadLocations() {
+            try {
+                const response = await API.location.getAllLocations();
+                if (response.success && response.data) {
+                    locations = response.data;
+                    populateLocationSelects();
+                }
+            } catch (error) {
+                console.error('Failed to load locations:', error);
+                // Use fallback locations
+                locations = [
+                    { id: 1, name: 'Belize City Terminal', type: 'Terminal' },
+                    { id: 2, name: 'Belmopan Terminal', type: 'Terminal' },
+                    { id: 3, name: 'San Ignacio Terminal', type: 'Terminal' },
+                    { id: 4, name: 'Orange Walk Terminal', type: 'Terminal' },
+                    { id: 5, name: 'Corozal Terminal', type: 'Terminal' },
+                    { id: 6, name: 'San Pedro Terminal', type: 'Terminal' },
+                    { id: 7, name: 'Dangriga Terminal', type: 'Terminal' },
+                    { id: 8, name: 'Punta Gorda Terminal', type: 'Terminal' }
+                ];
+                populateLocationSelects();
+            }
+        }
+
+        function populateLocationSelects() {
+            const fromSelect = document.getElementById('from-location');
+            const toSelect = document.getElementById('to-location');
+
+            locations.forEach(location => {
+                const option1 = document.createElement('option');
+                option1.value = location.id;
+                option1.textContent = location.name;
+                fromSelect.appendChild(option1);
+
+                const option2 = document.createElement('option');
+                option2.value = location.id;
+                option2.textContent = location.name;
+                toSelect.appendChild(option2);
+            });
+        }
+
+        async function handleSearch(e) {
+            e.preventDefault();
+
+            const fromLocation = document.getElementById('from-location').value;
+            const toLocation = document.getElementById('to-location').value;
+            const travelDate = document.getElementById('travel-date').value;
+            const busType = document.getElementById('bus-type').value;
+
+            // Validate
+            if (!fromLocation || !toLocation || !travelDate) {
+                Utils.showToast('Please fill in all required fields', 'error');
+                return;
+            }
+
+            if (fromLocation === toLocation) {
+                Utils.showToast('Departure and destination must be different', 'error');
+                return;
+            }
+
+            // Show loading state
+            document.getElementById('results-section').style.display = 'none';
+            document.getElementById('empty-state').style.display = 'none';
+            document.getElementById('loading-state').style.display = 'block';
+
+            try {
+                const response = await API.bus.getAvailableBuses({
+                    from: fromLocation,
+                    to: toLocation,
+                    date: travelDate,
+                    type: busType
+                });
+
+                document.getElementById('loading-state').style.display = 'none';
+
+                if (response.success && response.data && response.data.length > 0) {
+                    displayBusResults(response.data);
+                } else {
+                    document.getElementById('empty-state').style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Search failed:', error);
+                document.getElementById('loading-state').style.display = 'none';
+                document.getElementById('empty-state').style.display = 'block';
+                Utils.showToast(error.message || 'Search failed. Please try again.', 'error');
+            }
+        }
+
+        function displayBusResults(buses) {
+            const container = document.getElementById('bus-results');
+            container.innerHTML = '';
+
+            document.getElementById('results-count').textContent = `${buses.length} bus(es) found`;
+            document.getElementById('results-section').style.display = 'block';
+
+            const locationsMap = {};
+            locations.forEach(loc => {
+                locationsMap[loc.id] = loc;
+            });
+
+            buses.forEach(bus => {
+                const card = Components.createBusCard(bus, locationsMap, openBookingModal);
+                container.appendChild(card);
+            });
+        }
+
+        function openBookingModal(bus) {
+            selectedBus = bus;
+            
+            document.getElementById('selected-bus-id').value = bus.id;
+            document.getElementById('modal-bus-name').textContent = `${bus.name} (${bus.busNumber})`;
+            
+            const fromLoc = locations.find(l => l.id === bus.departureLocationId);
+            const toLoc = locations.find(l => l.id === bus.arrivalLocationId);
+            document.getElementById('modal-bus-route').textContent = 
+                `${fromLoc?.name || 'Unknown'} → ${toLoc?.name || 'Unknown'}`;
+            
+            document.getElementById('modal-bus-price').textContent = 
+                `Price per seat: ${Utils.formatCurrency(bus.pricePerSeat || 0)}`;
+            
+            document.getElementById('seats').value = 1;
+            document.getElementById('seat-numbers').value = '';
+            document.getElementById('is-round-trip').checked = false;
+            document.getElementById('return-date-group').style.display = 'none';
+            
+            updateBookingTotal();
+            Components.openModal(document.getElementById('booking-modal'));
+        }
+
+        function updateBookingTotal() {
+            if (!selectedBus) return;
+            
+            const seats = parseInt(document.getElementById('seats').value) || 1;
+            const pricePerSeat = selectedBus.pricePerSeat || 0;
+            const total = seats * pricePerSeat;
+            
+            document.getElementById('booking-total').textContent = Utils.formatCurrency(total);
+        }
+
+        async function handleBooking(e) {
+            e.preventDefault();
+
+            if (!selectedBus) {
+                Utils.showToast('No bus selected', 'error');
+                return;
+            }
+
+            const user = Auth.getCurrentUser();
+            const seats = parseInt(document.getElementById('seats').value);
+            const seatNumbers = document.getElementById('seat-numbers').value;
+            const isRoundTrip = document.getElementById('is-round-trip').checked;
+            const returnDate = document.getElementById('return-date').value;
+
+            const bookingData = {
+                busId: selectedBus.id,
+                customerId: user.id,
+                destination: locations.find(l => l.id === selectedBus.arrivalLocationId)?.name || '',
+                travelDate: document.getElementById('travel-date').value,
+                numberOfSeats: seats,
+                seatNumbers: seatNumbers || null,
+                isRoundTrip: isRoundTrip,
+                returnDate: isRoundTrip ? returnDate : null
+            };
+
+            try {
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Processing...';
+
+                const response = await API.ticket.bookTicket(bookingData);
+
+                if (response.success) {
+                    Utils.showToast('Booking confirmed successfully!', 'success');
+                    Components.closeModal(document.getElementById('booking-modal'));
+                    
+                    // Redirect to tickets page
+                    setTimeout(() => {
+                        window.location.href = 'tickets.html';
+                    }, 1000);
+                }
+
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Confirm Booking';
+            } catch (error) {
+                console.error('Booking failed:', error);
+                Utils.showToast(error.message || 'Booking failed. Please try again.', 'error');
+                
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Confirm Booking';
+            }
+        }
+    </script>
+</body>
+</html>

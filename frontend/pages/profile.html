@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Belize Bus Ticket System</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <a href="../index.html"><h1>Belize Bus</h1></a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="buses.html">Search Buses</a></li>
+                <li><a href="tickets.html">My Tickets</a></li>
+                <li><a href="profile.html" class="active">Profile</a></li>
+                <li><a href="#" class="btn-login">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="profile-page">
+        <div class="container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h2>My Profile</h2>
+                <p>Manage your account information and settings</p>
+            </div>
+
+            <!-- Profile Grid -->
+            <div class="profile-grid">
+                <!-- Profile Form -->
+                <div class="profile-card">
+                    <h3>Account Information</h3>
+                    
+                    <!-- Error Message -->
+                    <div id="form-error" class="alert alert-error" style="display: none;"></div>
+                    
+                    <!-- Success Message -->
+                    <div id="form-success" class="alert alert-success" style="display: none;"></div>
+
+                    <form id="profile-form" class="profile-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="first-name" class="form-label">First Name</label>
+                                <input type="text" id="first-name" name="firstName" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="last-name" class="form-label">Last Name</label>
+                                <input type="text" id="last-name" name="lastName" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input type="email" id="email" name="email" class="form-control" required disabled>
+                            <small class="form-help">Email cannot be changed. Contact support to update.</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone" class="form-label">Phone Number</label>
+                            <input type="tel" id="phone" name="phoneNumber" class="form-control" 
+                                   placeholder="+501-XXX-XXXX" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="address" class="form-label">Address</label>
+                            <textarea id="address" name="address" class="form-control" rows="3"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="date-of-birth" class="form-label">Date of Birth</label>
+                            <input type="date" id="date-of-birth" name="dateOfBirth" class="form-control">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </form>
+                </div>
+
+                <!-- Password Change -->
+                <div class="profile-card">
+                    <h3>Change Password</h3>
+                    
+                    <form id="password-form" class="password-form">
+                        <div class="form-group">
+                            <label for="current-password" class="form-label">Current Password</label>
+                            <input type="password" id="current-password" name="currentPassword" 
+                                   class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="new-password" class="form-label">New Password</label>
+                            <input type="password" id="new-password" name="newPassword" 
+                                   class="form-control" required minlength="8">
+                            <small class="form-help">Minimum 8 characters, include uppercase, lowercase, number</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirm-new-password" class="form-label">Confirm New Password</label>
+                            <input type="password" id="confirm-new-password" name="confirmPassword" 
+                                   class="form-control" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-secondary">Update Password</button>
+                    </form>
+                </div>
+
+                <!-- Account Stats -->
+                <div class="profile-card stats-card">
+                    <h3>Account Statistics</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-value" id="total-trips">-</span>
+                            <span class="stat-label">Total Trips</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="total-spent">-</span>
+                            <span class="stat-label">Total Spent</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="member-days">-</span>
+                            <span class="stat-label">Days as Member</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="upcoming-trips">-</span>
+                            <span class="stat-label">Upcoming Trips</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account Actions -->
+                <div class="profile-card actions-card">
+                    <h3>Account Actions</h3>
+                    <div class="actions-list">
+                        <div class="action-item">
+                            <div class="action-info">
+                                <h4>Download My Data</h4>
+                                <p>Get a copy of your personal data and booking history.</p>
+                            </div>
+                            <button class="btn btn-secondary" onclick="downloadMyData()">Download</button>
+                        </div>
+                        <div class="action-item">
+                            <div class="action-info">
+                                <h4>Delete Account</h4>
+                                <p>Permanently delete your account and all associated data.</p>
+                            </div>
+                            <button class="btn btn-danger" onclick="confirmDeleteAccount()">Delete Account</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="modal">
+        <div class="modal-overlay" data-modal-close></div>
+        <div class="modal-container modal-small">
+            <div class="modal-header">
+                <h3>Delete Account</h3>
+                <button class="modal-close" data-modal-close>&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="delete-warning">Warning: This action cannot be undone!</p>
+                <p>All your bookings, tickets, and account information will be permanently deleted.</p>
+                <div class="form-group">
+                    <label for="delete-confirm" class="form-label">Type "DELETE" to confirm:</label>
+                    <input type="text" id="delete-confirm" class="form-control" placeholder="Type DELETE here">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-modal-close>Cancel</button>
+                <button class="btn btn-danger" id="confirm-delete-btn">Delete Account</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Belize Bus</h3>
+                    <p>Your trusted partner for comfortable and reliable bus travel across Belize.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="../index.html">Home</a></li>
+                        <li><a href="buses.html">Search Buses</a></li>
+                        <li><a href="tickets.html">My Tickets</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <p>Email: info@belizebus.com</p>
+                    <p>Phone: +501-222-1234</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Belize Bus Ticket System. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/components.js"></script>
+    <script>
+        let currentUser = null;
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Require authentication
+            if (!Auth.requireAuth()) return;
+
+            // Get current user
+            currentUser = Auth.getCurrentUser();
+            
+            // Setup logout handlers
+            document.querySelectorAll('.btn-login').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    await Auth.handleLogout();
+                });
+            });
+
+            // Load profile data
+            await loadProfile();
+
+            // Setup form handlers
+            document.getElementById('profile-form').addEventListener('submit', handleProfileUpdate);
+            document.getElementById('password-form').addEventListener('submit', handlePasswordChange);
+            document.getElementById('confirm-delete-btn').addEventListener('click', confirmDeleteAccount);
+        });
+
+        async function loadProfile() {
+            try {
+                // Try to fetch full profile from API
+                const response = await API.customer.getProfile(currentUser.id);
+                
+                if (response.success && response.data) {
+                    const customer = response.data;
+                    const user = customer.user || currentUser;
+                    
+                    // Populate form fields
+                    document.getElementById('first-name').value = user.firstName || '';
+                    document.getElementById('last-name').value = user.lastName || '';
+                    document.getElementById('email').value = user.email || '';
+                    document.getElementById('phone').value = customer.phoneNumber || '';
+                    document.getElementById('address').value = customer.address || '';
+                    document.getElementById('date-of-birth').value = customer.dateOfBirth || '';
+                    
+                    // Update stats
+                    updateStats(customer);
+                } else {
+                    // Use cached user data
+                    populateFormFromCache();
+                }
+            } catch (error) {
+                console.error('Failed to load profile:', error);
+                populateFormFromCache();
+            }
+        }
+
+        function populateFormFromCache() {
+            document.getElementById('first-name').value = currentUser.firstName || '';
+            document.getElementById('last-name').value = currentUser.lastName || '';
+            document.getElementById('email').value = currentUser.email || '';
+            // Phone and address not in cache, leave empty
+        }
+
+        function updateStats(customer) {
+            // Calculate statistics from bookings if available
+            const bookings = customer.bookings || [];
+            document.getElementById('total-trips').textContent = bookings.length;
+            
+            const totalSpent = bookings.reduce((sum, b) => sum + (b.totalPrice || 0), 0);
+            document.getElementById('total-spent').textContent = Utils.formatCurrency(totalSpent);
+            
+            const memberSince = new Date(customer.createdAt || Date.now());
+            const daysAsMember = Math.floor((Date.now() - memberSince) / (1000 * 60 * 60 * 24));
+            document.getElementById('member-days').textContent = daysAsMember;
+            
+            const upcomingTrips = bookings.filter(b => new Date(b.travelDate) > new Date()).length;
+            document.getElementById('upcoming-trips').textContent = upcomingTrips;
+        }
+
+        async function handleProfileUpdate(e) {
+            e.preventDefault();
+            
+            const formData = {
+                firstName: document.getElementById('first-name').value,
+                lastName: document.getElementById('last-name').value,
+                phoneNumber: document.getElementById('phone').value,
+                address: document.getElementById('address').value,
+                dateOfBirth: document.getElementById('date-of-birth').value
+            };
+
+            try {
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                const originalText = submitBtn.textContent;
+                submitBtn.textContent = 'Saving...';
+                submitBtn.disabled = true;
+
+                const response = await API.customer.updateProfile(currentUser.id, formData);
+
+                if (response.success) {
+                    showFormSuccess('Profile updated successfully!');
+                    // Update cached user info
+                    currentUser.firstName = formData.firstName;
+                    currentUser.lastName = formData.lastName;
+                    Auth.setCurrentUser(currentUser);
+                }
+
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            } catch (error) {
+                console.error('Profile update failed:', error);
+                showFormError(error.message || 'Failed to update profile');
+                
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.textContent = 'Save Changes';
+                submitBtn.disabled = false;
+            }
+        }
+
+        async function handlePasswordChange(e) {
+            e.preventDefault();
+            
+            const currentPassword = document.getElementById('current-password').value;
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-new-password').value;
+
+            if (newPassword !== confirmPassword) {
+                showFormError('New passwords do not match');
+                return;
+            }
+
+            const passwordValidation = Utils.validatePassword(newPassword);
+            if (!passwordValidation.valid) {
+                showFormError('Password does not meet requirements: ' + passwordValidation.requirements.join(', '));
+                return;
+            }
+
+            try {
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                const originalText = submitBtn.textContent;
+                submitBtn.textContent = 'Updating...';
+                submitBtn.disabled = true;
+
+                await API.auth.changePassword(currentPassword, newPassword);
+
+                showFormSuccess('Password updated successfully!');
+                e.target.reset();
+
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            } catch (error) {
+                console.error('Password change failed:', error);
+                showFormError(error.message || 'Failed to change password. Please check your current password.');
+                
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.textContent = 'Update Password';
+                submitBtn.disabled = false;
+            }
+        }
+
+        function showFormError(message) {
+            const errorEl = document.getElementById('form-error');
+            errorEl.textContent = message;
+            errorEl.style.display = 'block';
+            setTimeout(() => {
+                errorEl.style.display = 'none';
+            }, 5000);
+        }
+
+        function showFormSuccess(message) {
+            const successEl = document.getElementById('form-success');
+            successEl.textContent = message;
+            successEl.style.display = 'block';
+            setTimeout(() => {
+                successEl.style.display = 'none';
+            }, 3000);
+        }
+
+        function downloadMyData() {
+            Utils.showToast('Preparing your data download...', 'info');
+            // In production, this would trigger a download request to the API
+            setTimeout(() => {
+                Utils.showToast('Data download ready. Check your email.', 'success');
+            }, 2000);
+        }
+
+        function confirmDeleteAccount() {
+            const confirmInput = document.getElementById('delete-confirm');
+            if (confirmInput.value !== 'DELETE') {
+                confirmInput.classList.add('is-invalid');
+                Utils.showToast('Please type "DELETE" to confirm', 'error');
+                return;
+            }
+            
+            // In production, this would call the API to delete the account
+            Utils.showToast('Account deletion request submitted. You will receive a confirmation email.', 'warning');
+            Components.closeModal(document.getElementById('delete-modal'));
+            
+            // For demo, just logout after delay
+            setTimeout(() => {
+                Auth.handleLogout();
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management - Admin - Belize Bus Ticket System</title>
+    <link rel="stylesheet" href="../../css/styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <a href="../../index.html"><h1>Belize Bus</h1></a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="../dashboard.html">Dashboard</a></li>
+                <li><a href="users.html" class="active">Users</a></li>
+                <li><a href="buses.html">Buses</a></li>
+                <li><a href="reports.html">Reports</a></li>
+                <li><a href="#" class="btn-login">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="admin-page">
+        <div class="container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h2>User Management</h2>
+                <p>Manage customers, tellers, and administrators</p>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="admin-stats">
+                <div class="stat-card">
+                    <span class="stat-icon">👥</span>
+                    <div class="stat-info">
+                        <span class="stat-value" id="total-customers">0</span>
+                        <span class="stat-label">Total Customers</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">💼</span>
+                    <div class="stat-info">
+                        <span class="stat-value" id="total-tellers">0</span>
+                        <span class="stat-label">Total Tellers</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">🔐</span>
+                    <div class="stat-info">
+                        <span class="stat-value" id="total-admins">0</span>
+                        <span class="stat-label">Total Admins</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">✅</span>
+                    <div class="stat-info">
+                        <span class="stat-value" id="active-users">0</span>
+                        <span class="stat-label">Active Users</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter Bar -->
+            <div class="filter-bar">
+                <div class="filter-search">
+                    <input type="text" id="search-input" class="search-input" placeholder="Search by name or email...">
+                </div>
+                <div class="filter-options">
+                    <div class="filter-option">
+                        <label>User Type:</label>
+                        <select id="type-filter" class="filter-select">
+                            <option value="">All Types</option>
+                            <option value="Customer">Customers</option>
+                            <option value="Teller">Tellers</option>
+                            <option value="Admin">Admins</option>
+                        </select>
+                    </div>
+                    <div class="filter-option">
+                        <label>Status:</label>
+                        <select id="status-filter" class="filter-select">
+                            <option value="">All Statuses</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" onclick="openAddUserModal()">Add User</button>
+                </div>
+            </div>
+
+            <!-- Users Table -->
+            <div class="table-wrapper">
+                <table class="data-table" id="users-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-table-body">
+                        <tr>
+                            <td colspan="6" class="empty-state">
+                                <div class="loading-spinner"></div>
+                                <p>Loading users...</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add/Edit User Modal -->
+    <div id="user-modal" class="modal">
+        <div class="modal-overlay" data-modal-close></div>
+        <div class="modal-container modal-medium">
+            <div class="modal-header">
+                <h3 id="modal-title">Add New User</h3>
+                <button class="modal-close" data-modal-close>&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="user-form" class="user-form">
+                    <input type="hidden" id="user-id">
+                    
+                    <div class="form-group">
+                        <label for="user-type" class="form-label">User Type</label>
+                        <select id="user-type" name="userType" class="form-control" required>
+                            <option value="">Select Type</option>
+                            <option value="Customer">Customer</option>
+                            <option value="Teller">Teller</option>
+                            <option value="Admin">Admin</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="first-name" class="form-label">First Name</label>
+                            <input type="text" id="first-name" name="firstName" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="last-name" class="form-label">Last Name</label>
+                            <input type="text" id="last-name" name="lastName" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" id="email" name="email" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" id="password" name="password" class="form-control" 
+                               placeholder="Leave blank to keep unchanged">
+                    </div>
+
+                    <div class="form-group" id="phone-group">
+                        <label for="phone" class="form-label">Phone Number</label>
+                        <input type="tel" id="phone" name="phoneNumber" class="form-control">
+                    </div>
+
+                    <div class="form-group" id="employee-id-group" style="display: none;">
+                        <label for="employee-id" class="form-label">Employee ID</label>
+                        <input type="text" id="employee-id" name="employeeId" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="is-active" class="checkbox-label">
+                            <input type="checkbox" id="is-active" name="isActive" checked>
+                            <span>Active User</span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">Save User</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Belize Bus</h3>
+                    <p>Your trusted partner for comfortable and reliable bus travel across Belize.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Admin Links</h3>
+                    <ul>
+                        <li><a href="users.html">Users</a></li>
+                        <li><a href="buses.html">Buses</a></li>
+                        <li><a href="reports.html">Reports</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <p>Email: info@belizebus.com</p>
+                    <p>Phone: +501-222-1234</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Belize Bus Ticket System. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../../js/api.js"></script>
+    <script src="../../js/auth.js"></script>
+    <script src="../../js/utils.js"></script>
+    <script src="../../js/components.js"></script>
+    <script>
+        let allUsers = [];
+        let filteredUsers = [];
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Require admin authentication
+            if (!Auth.requireRole(['Admin'])) return;
+
+            // Setup logout handlers
+            document.querySelectorAll('.btn-login').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    await Auth.handleLogout();
+                });
+            });
+
+            // Load all users
+            await loadUsers();
+
+            // Setup filters
+            document.getElementById('search-input').addEventListener('input', handleFilter);
+            document.getElementById('type-filter').addEventListener('change', handleFilter);
+            document.getElementById('status-filter').addEventListener('change', handleFilter);
+
+            // Setup user form
+            document.getElementById('user-form').addEventListener('submit', handleUserSubmit);
+
+            // User type change handler
+            document.getElementById('user-type').addEventListener('change', function() {
+                const phoneGroup = document.getElementById('phone-group');
+                const employeeIdGroup = document.getElementById('employee-id-group');
+                
+                if (this.value === 'Teller' || this.value === 'Admin') {
+                    employeeIdGroup.style.display = 'block';
+                    document.getElementById('employee-id').required = true;
+                } else {
+                    employeeIdGroup.style.display = 'none';
+                    document.getElementById('employee-id').required = false;
+                }
+
+                if (this.value === 'Customer') {
+                    phoneGroup.style.display = 'block';
+                } else {
+                    phoneGroup.style.display = 'none';
+                }
+            });
+        });
+
+        async function loadUsers() {
+            try {
+                // Load customers
+                const customersResponse = await API.admin.getAllCustomers();
+                const tellersResponse = await API.admin.getAllTellers();
+                const adminsResponse = await API.admin.getAllUsers();
+
+                allUsers = [];
+
+                if (customersResponse.success && customersResponse.data) {
+                    allUsers = allUsers.concat(customersResponse.data.map(u => ({...u, userType: 'Customer'})));
+                }
+                if (tellersResponse.success && tellersResponse.data) {
+                    allUsers = allUsers.concat(tellersResponse.data.map(u => ({...u, userType: 'Teller'})));
+                }
+                if (adminsResponse.success && adminsResponse.data) {
+                    allUsers = allUsers.concat(adminsResponse.data.map(u => ({...u, userType: 'Admin'})));
+                }
+
+                filteredUsers = [...allUsers];
+                displayUsers(filteredUsers);
+                updateStats();
+            } catch (error) {
+                console.error('Failed to load users:', error);
+                Utils.showToast('Failed to load users', 'error');
+            }
+        }
+
+        function displayUsers(users) {
+            const tbody = document.getElementById('users-table-body');
+            tbody.innerHTML = '';
+
+            if (users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No users found</td></tr>';
+                return;
+            }
+
+            users.forEach(user => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>
+                        <div class="user-cell">
+                            <span class="user-avatar">${Utils.generateInitials(user.firstName, user.lastName)}</span>
+                            <span class="user-name">${escapeHtml(user.firstName)} ${escapeHtml(user.lastName)}</span>
+                        </div>
+                    </td>
+                    <td>${escapeHtml(user.email)}</td>
+                    <td><span class="badge badge-${user.userType.toLowerCase()}">${user.userType}</span></td>
+                    <td>${createStatusBadge(user.isActive ? 'Active' : 'Inactive')}</td>
+                    <td>${Utils.formatDate(user.createdAt)}</td>
+                    <td>
+                        <button class="btn btn-sm btn-secondary" onclick="editUser(${user.id})">Edit</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteUser(${user.id}, '${user.userType}')">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function handleFilter() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const typeFilter = document.getElementById('type-filter').value;
+            const statusFilter = document.getElementById('status-filter').value;
+
+            filteredUsers = allUsers.filter(user => {
+                const matchesSearch = !searchTerm || 
+                    `${user.firstName} ${user.lastName}`.toLowerCase().includes(searchTerm) ||
+                    user.email.toLowerCase().includes(searchTerm);
+                
+                const matchesType = !typeFilter || user.userType === typeFilter;
+                const matchesStatus = !statusFilter || (statusFilter === 'active' ? user.isActive : !user.isActive);
+
+                return matchesSearch && matchesType && matchesStatus;
+            });
+
+            displayUsers(filteredUsers);
+        }
+
+        function updateStats() {
+            document.getElementById('total-customers').textContent = allUsers.filter(u => u.userType === 'Customer').length;
+            document.getElementById('total-tellers').textContent = allUsers.filter(u => u.userType === 'Teller').length;
+            document.getElementById('total-admins').textContent = allUsers.filter(u => u.userType === 'Admin').length;
+            document.getElementById('active-users').textContent = allUsers.filter(u => u.isActive).length;
+        }
+
+        function openAddUserModal() {
+            document.getElementById('modal-title').textContent = 'Add New User';
+            document.getElementById('user-form').reset();
+            document.getElementById('user-id').value = '';
+            document.getElementById('is-active').checked = true;
+            Components.openModal(document.getElementById('user-modal'));
+        }
+
+        function editUser(userId) {
+            const user = allUsers.find(u => u.id === userId);
+            if (!user) return;
+
+            document.getElementById('modal-title').textContent = 'Edit User';
+            document.getElementById('user-id').value = user.id;
+            document.getElementById('user-type').value = user.userType;
+            document.getElementById('first-name').value = user.firstName;
+            document.getElementById('last-name').value = user.lastName;
+            document.getElementById('email').value = user.email;
+            document.getElementById('is-active').checked = user.isActive;
+
+            if (user.phoneNumber) document.getElementById('phone').value = user.phoneNumber;
+            if (user.employeeId) document.getElementById('employee-id').value = user.employeeId;
+
+            // Trigger type change to show/hide fields
+            document.getElementById('user-type').dispatchEvent(new Event('change'));
+
+            Components.openModal(document.getElementById('user-modal'));
+        }
+
+        async function handleUserSubmit(e) {
+            e.preventDefault();
+
+            const formData = new FormData(e.target);
+            const userData = {
+                firstName: formData.get('firstName'),
+                lastName: formData.get('lastName'),
+                email: formData.get('email'),
+                userType: formData.get('userType'),
+                isActive: formData.get('isActive') === 'on'
+            };
+
+            if (formData.get('password')) {
+                userData.password = formData.get('password');
+            }
+
+            if (userData.userType === 'Teller' || userData.userType === 'Admin') {
+                userData.employeeId = formData.get('employeeId');
+            }
+
+            if (userData.userType === 'Customer') {
+                userData.phoneNumber = formData.get('phoneNumber');
+            }
+
+            const userId = document.getElementById('user-id').value;
+            const isEdit = !!userId;
+
+            try {
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                const originalText = submitBtn.textContent;
+                submitBtn.textContent = 'Saving...';
+                submitBtn.disabled = true;
+
+                let response;
+                if (isEdit) {
+                    response = await API.admin.updateUser(userId, userData);
+                } else {
+                    response = await API.admin.createUser(userData);
+                }
+
+                if (response.success) {
+                    Utils.showToast(isEdit ? 'User updated successfully' : 'User created successfully', 'success');
+                    Components.closeModal(document.getElementById('user-modal'));
+                    await loadUsers();
+                }
+
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            } catch (error) {
+                console.error('User save failed:', error);
+                Utils.showToast(error.message || 'Failed to save user', 'error');
+                
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.textContent = 'Save User';
+                submitBtn.disabled = false;
+            }
+        }
+
+        async function deleteUser(userId, userType) {
+            if (!confirm(`Are you sure you want to delete this ${userType}?`)) return;
+
+            try {
+                // In production, use appropriate API endpoint based on user type
+                Utils.showToast('User deletion not implemented in demo', 'warning');
+            } catch (error) {
+                console.error('Delete failed:', error);
+                Utils.showToast('Failed to delete user', 'error');
+            }
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Tickets - Belize Bus Ticket System</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <a href="../index.html"><h1>Belize Bus</h1></a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="buses.html">Search Buses</a></li>
+                <li><a href="tickets.html" class="active">My Tickets</a></li>
+                <li><a href="profile.html">Profile</a></li>
+                <li><a href="#" class="btn-login">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="tickets-page">
+        <div class="container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h2>My Tickets</h2>
+                <p>View and manage your ticket bookings</p>
+            </div>
+
+            <!-- Filter Bar -->
+            <div class="filter-bar">
+                <div class="filter-search">
+                    <input type="text" id="search-input" class="search-input" placeholder="Search by reference or destination...">
+                </div>
+                <div class="filter-options">
+                    <div class="filter-option">
+                        <label>Status:</label>
+                        <select id="status-filter" class="filter-select">
+                            <option value="">All Statuses</option>
+                            <option value="Available">Available</option>
+                            <option value="Booked">Booked</option>
+                            <option value="Confirmed">Confirmed</option>
+                            <option value="Cancelled">Cancelled</option>
+                            <option value="Expired">Expired</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tickets List -->
+            <div id="tickets-container" class="tickets-container">
+                <div class="loading-state">
+                    <div class="loading-spinner"></div>
+                    <p>Loading your tickets...</p>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div id="empty-state" class="empty-state" style="display: none;">
+                <div class="empty-icon">🎫</div>
+                <h3>No tickets found</h3>
+                <p>You haven't booked any tickets yet.</p>
+                <a href="buses.html" class="btn btn-primary">Book Your First Ticket</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Ticket Detail Modal -->
+    <div id="ticket-modal" class="modal">
+        <div class="modal-overlay" data-modal-close></div>
+        <div class="modal-container modal-large">
+            <div class="modal-header">
+                <h3>Ticket Details</h3>
+                <button class="modal-close" data-modal-close>&times;</button>
+            </div>
+            <div class="modal-body" id="ticket-modal-body">
+                <!-- Ticket details will be populated here -->
+            </div>
+            <div class="modal-footer" id="ticket-modal-footer">
+                <!-- Action buttons will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Cancel Confirmation Modal -->
+    <div id="cancel-modal" class="modal">
+        <div class="modal-overlay" data-modal-close></div>
+        <div class="modal-container modal-small">
+            <div class="modal-header">
+                <h3>Cancel Ticket</h3>
+                <button class="modal-close" data-modal-close>&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to cancel this ticket?</p>
+                <p class="cancel-warning">This action cannot be undone.</p>
+                <input type="hidden" id="cancel-ticket-id">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-modal-close>Keep Ticket</button>
+                <button class="btn btn-danger" id="confirm-cancel-btn">Cancel Ticket</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Belize Bus</h3>
+                    <p>Your trusted partner for comfortable and reliable bus travel across Belize.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="../index.html">Home</a></li>
+                        <li><a href="buses.html">Search Buses</a></li>
+                        <li><a href="profile.html">Profile</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <p>Email: info@belizebus.com</p>
+                    <p>Phone: +501-222-1234</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Belize Bus Ticket System. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/components.js"></script>
+    <script>
+        let allTickets = [];
+        let filteredTickets = [];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Require authentication
+            if (!Auth.requireAuth()) return;
+
+            // Setup logout handlers
+            document.querySelectorAll('.btn-login').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    await Auth.handleLogout();
+                });
+            });
+
+            // Load tickets
+            loadTickets();
+
+            // Setup filters
+            document.getElementById('search-input').addEventListener('input', handleFilter);
+            document.getElementById('status-filter').addEventListener('change', handleFilter);
+
+            // Setup cancel confirmation
+            document.getElementById('confirm-cancel-btn').addEventListener('click', confirmCancelTicket);
+        });
+
+        async function loadTickets() {
+            const user = Auth.getCurrentUser();
+            const container = document.getElementById('tickets-container');
+
+            try {
+                const response = await API.customer.getTickets(user.id);
+
+                if (response.success && response.data && response.data.length > 0) {
+                    allTickets = response.data;
+                    filteredTickets = [...allTickets];
+                    displayTickets(filteredTickets);
+                } else {
+                    container.style.display = 'none';
+                    document.getElementById('empty-state').style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Failed to load tickets:', error);
+                container.innerHTML = `
+                    <div class="error-state">
+                        <p>Unable to load tickets. Please try again later.</p>
+                        <button class="btn btn-primary" onclick="loadTickets()">Retry</button>
+                    </div>
+                `;
+            }
+        }
+
+        function displayTickets(tickets) {
+            const container = document.getElementById('tickets-container');
+            container.style.display = 'block';
+            document.getElementById('empty-state').style.display = 'none';
+            container.innerHTML = '';
+
+            if (tickets.length === 0) {
+                container.style.display = 'none';
+                document.getElementById('empty-state').style.display = 'block';
+                return;
+            }
+
+            const ticketsGrid = document.createElement('div');
+            ticketsGrid.className = 'tickets-grid';
+
+            tickets.forEach(ticket => {
+                const card = createTicketCard(ticket);
+                ticketsGrid.appendChild(card);
+            });
+
+            container.appendChild(ticketsGrid);
+        }
+
+        function createTicketCard(ticket) {
+            const card = document.createElement('div');
+            card.className = 'ticket-card';
+            card.innerHTML = `
+                <div class="ticket-header">
+                    <div class="ticket-reference">
+                        <span class="reference-label">Booking Reference</span>
+                        <span class="reference-value">${escapeHtml(ticket.bookingReference)}</span>
+                    </div>
+                    ${createStatusBadge(ticket.status)}
+                </div>
+                <div class="ticket-body">
+                    <div class="ticket-row">
+                        <span class="label">Destination:</span>
+                        <span class="value">${escapeHtml(ticket.destination)}</span>
+                    </div>
+                    <div class="ticket-row">
+                        <span class="label">Travel Date:</span>
+                        <span class="value">${formatDate(ticket.travelDate)}</span>
+                    </div>
+                    <div class="ticket-row">
+                        <span class="label">Seats:</span>
+                        <span class="value">${ticket.numberOfSeats} ${ticket.seatNumbers ? `(${escapeHtml(ticket.seatNumbers)})` : ''}</span>
+                    </div>
+                    <div class="ticket-row">
+                        <span class="label">Total Price:</span>
+                        <span class="value price">${formatCurrency(ticket.totalPrice)}</span>
+                    </div>
+                    ${ticket.isRoundTrip ? `
+                    <div class="ticket-row">
+                        <span class="label">Return Date:</span>
+                        <span class="value">${formatDate(ticket.returnDate)}</span>
+                    </div>
+                    ` : ''}
+                    <div class="ticket-row">
+                        <span class="label">Booked On:</span>
+                        <span class="value">${formatDate(ticket.bookingDate)}</span>
+                    </div>
+                </div>
+                <div class="ticket-footer">
+                    <button class="btn btn-secondary view-details-btn" data-ticket-id="${ticket.id}">View Details</button>
+                    ${['Booked', 'Confirmed'].includes(ticket.status) ? `
+                    <button class="btn btn-danger cancel-ticket-btn" data-ticket-id="${ticket.id}">Cancel Ticket</button>
+                    ` : ''}
+                </div>
+            `;
+
+            // Add event listeners
+            card.querySelector('.view-details-btn').addEventListener('click', () => showTicketDetails(ticket));
+            
+            const cancelBtn = card.querySelector('.cancel-ticket-btn');
+            if (cancelBtn) {
+                cancelBtn.addEventListener('click', () => openCancelModal(ticket.id));
+            }
+
+            return card;
+        }
+
+        function handleFilter() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const statusFilter = document.getElementById('status-filter').value;
+
+            filteredTickets = allTickets.filter(ticket => {
+                const matchesSearch = !searchTerm || 
+                    ticket.bookingReference.toLowerCase().includes(searchTerm) ||
+                    ticket.destination.toLowerCase().includes(searchTerm);
+                
+                const matchesStatus = !statusFilter || ticket.status === statusFilter;
+
+                return matchesSearch && matchesStatus;
+            });
+
+            displayTickets(filteredTickets);
+        }
+
+        function showTicketDetails(ticket) {
+            const modalBody = document.getElementById('ticket-modal-body');
+            const modalFooter = document.getElementById('ticket-modal-footer');
+
+            modalBody.innerHTML = `
+                <div class="ticket-detail">
+                    <div class="detail-header">
+                        <h4>${escapeHtml(ticket.bookingReference)}</h4>
+                        ${createStatusBadge(ticket.status)}
+                    </div>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">Destination</span>
+                            <span class="detail-value">${escapeHtml(ticket.destination)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Travel Date</span>
+                            <span class="detail-value">${formatDate(ticket.travelDate)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Number of Seats</span>
+                            <span class="detail-value">${ticket.numberOfSeats}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Seat Numbers</span>
+                            <span class="detail-value">${ticket.seatNumbers || 'Auto-assigned'}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Price Per Seat</span>
+                            <span class="detail-value">${formatCurrency(ticket.pricePerSeat)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Total Price</span>
+                            <span class="detail-value price">${formatCurrency(ticket.totalPrice)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Round Trip</span>
+                            <span class="detail-value">${ticket.isRoundTrip ? 'Yes' : 'No'}</span>
+                        </div>
+                        ${ticket.isRoundTrip ? `
+                        <div class="detail-item">
+                            <span class="detail-label">Return Date</span>
+                            <span class="detail-value">${formatDate(ticket.returnDate)}</span>
+                        </div>
+                        ` : ''}
+                        <div class="detail-item">
+                            <span class="detail-label">Booking Date</span>
+                            <span class="detail-value">${formatDate(ticket.bookingDate)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Status</span>
+                            <span class="detail-value">${createStatusBadge(ticket.status)}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            modalFooter.innerHTML = `
+                <button class="btn btn-primary" onclick="window.print()">Print Ticket</button>
+                ${['Booked', 'Confirmed'].includes(ticket.status) ? `
+                <button class="btn btn-danger" onclick="openCancelModal(${ticket.id})">Cancel Ticket</button>
+                ` : ''}
+            `;
+
+            Components.openModal(document.getElementById('ticket-modal'));
+        }
+
+        function openCancelModal(ticketId) {
+            document.getElementById('cancel-ticket-id').value = ticketId;
+            Components.closeModal(document.getElementById('ticket-modal'));
+            Components.openModal(document.getElementById('cancel-modal'));
+        }
+
+        async function confirmCancelTicket() {
+            const ticketId = document.getElementById('cancel-ticket-id').value;
+            
+            try {
+                const btn = document.getElementById('confirm-cancel-btn');
+                btn.disabled = true;
+                btn.textContent = 'Cancelling...';
+
+                const response = await API.ticket.cancelTicket(ticketId);
+
+                if (response.success) {
+                    Utils.showToast('Ticket cancelled successfully', 'success');
+                    Components.closeModal(document.getElementById('cancel-modal'));
+                    loadTickets(); // Reload tickets
+                }
+
+                btn.disabled = false;
+                btn.textContent = 'Cancel Ticket';
+            } catch (error) {
+                console.error('Cancel failed:', error);
+                Utils.showToast(error.message || 'Failed to cancel ticket', 'error');
+                
+                const btn = document.getElementById('confirm-cancel-btn');
+                btn.disabled = false;
+                btn.textContent = 'Cancel Ticket';
+            }
+        }
+
+        // Helper functions
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Belize Bus Ticket System</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <a href="../index.html"><h1>Belize Bus</h1></a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="buses.html">Search Buses</a></li>
+                <li><a href="tickets.html">My Tickets</a></li>
+                <li><a href="profile.html">Profile</a></li>
+                <li><a href="#" class="btn-login">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="dashboard-page">
+        <div class="container">
+            <!-- Welcome Section -->
+            <div class="welcome-section">
+                <h2>Welcome, <span class="user-name">Loading...</span></h2>
+                <p>Manage your bookings and explore available routes</p>
+            </div>
+
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid">
+                <!-- Quick Actions -->
+                <div class="dashboard-card quick-actions">
+                    <h3>Quick Actions</h3>
+                    <div class="action-buttons">
+                        <a href="buses.html" class="action-btn">
+                            <span class="action-icon">🚌</span>
+                            <span>Search Buses</span>
+                        </a>
+                        <a href="tickets.html" class="action-btn">
+                            <span class="action-icon">🎫</span>
+                            <span>View Tickets</span>
+                        </a>
+                        <a href="profile.html" class="action-btn">
+                            <span class="action-icon">👤</span>
+                            <span>Edit Profile</span>
+                        </a>
+                        <a href="#" class="action-btn" id="logout-btn">
+                            <span class="action-icon">🚪</span>
+                            <span>Logout</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Recent Bookings -->
+                <div class="dashboard-card recent-bookings">
+                    <h3>Recent Bookings</h3>
+                    <div id="recent-bookings-list" class="bookings-list">
+                        <div class="loading-state">
+                            <div class="loading-spinner"></div>
+                            <p>Loading your bookings...</p>
+                        </div>
+                    </div>
+                    <a href="tickets.html" class="view-all-link">View All Tickets →</a>
+                </div>
+
+                <!-- Popular Routes -->
+                <div class="dashboard-card popular-routes">
+                    <h3>Popular Routes</h3>
+                    <div class="routes-list" id="popular-routes">
+                        <div class="route-item">
+                            <span class="route-from">Belize City</span>
+                            <span class="route-arrow">→</span>
+                            <span class="route-to">San Ignacio</span>
+                            <span class="route-price">from $20</span>
+                        </div>
+                        <div class="route-item">
+                            <span class="route-from">Belize City</span>
+                            <span class="route-arrow">→</span>
+                            <span class="route-to">Belmopan</span>
+                            <span class="route-price">from $15</span>
+                        </div>
+                        <div class="route-item">
+                            <span class="route-from">San Pedro</span>
+                            <span class="route-arrow">→</span>
+                            <span class="route-to">Belize City</span>
+                            <span class="route-price">from $25</span>
+                        </div>
+                        <div class="route-item">
+                            <span class="route-from">Dangriga</span>
+                            <span class="route-arrow">→</span>
+                            <span class="route-to">Punta Gorda</span>
+                            <span class="route-price">from $30</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account Info -->
+                <div class="dashboard-card account-info">
+                    <h3>Account Information</h3>
+                    <div class="info-list">
+                        <div class="info-item">
+                            <span class="info-label">Email:</span>
+                            <span class="info-value user-email">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Member Since:</span>
+                            <span class="info-value" id="member-since">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Total Bookings:</span>
+                            <span class="info-value" id="total-bookings">-</span>
+                        </div>
+                    </div>
+                    <a href="profile.html" class="btn btn-secondary btn-block">Edit Profile</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Belize Bus</h3>
+                    <p>Your trusted partner for comfortable and reliable bus travel across Belize.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="../index.html">Home</a></li>
+                        <li><a href="buses.html">Search Buses</a></li>
+                        <li><a href="tickets.html">My Tickets</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <p>Email: info@belizebus.com</p>
+                    <p>Phone: +501-222-1234</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Belize Bus Ticket System. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/components.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Require authentication
+            if (!Auth.requireAuth()) return;
+
+            // Get current user
+            const user = Auth.getCurrentUser();
+            
+            // Update UI with user info
+            document.querySelectorAll('.user-name').forEach(el => {
+                el.textContent = `${user.firstName} ${user.lastName}`;
+            });
+            document.querySelectorAll('.user-email').forEach(el => {
+                el.textContent = user.email;
+            });
+
+            // Setup logout handlers
+            document.querySelectorAll('.btn-login, #logout-btn').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    await Auth.handleLogout();
+                });
+            });
+
+            // Load recent bookings
+            loadRecentBookings(user.id);
+        });
+
+        async function loadRecentBookings(customerId) {
+            const container = document.getElementById('recent-bookings-list');
+            
+            try {
+                const response = await API.customer.getTickets(customerId, { limit: 5 });
+                
+                if (response.success && response.data && response.data.length > 0) {
+                    container.innerHTML = '';
+                    response.data.forEach(ticket => {
+                        const bookingDiv = document.createElement('div');
+                        bookingDiv.className = 'booking-item';
+                        bookingDiv.innerHTML = `
+                            <div class="booking-header">
+                                <span class="booking-ref">${escapeHtml(ticket.bookingReference)}</span>
+                                ${createStatusBadge(ticket.status)}
+                            </div>
+                            <div class="booking-details">
+                                <span>📍 ${escapeHtml(ticket.destination)}</span>
+                                <span>📅 ${formatDate(ticket.travelDate)}</span>
+                                <span>💺 ${ticket.numberOfSeats} seat(s)</span>
+                            </div>
+                            <div class="booking-price">${formatCurrency(ticket.totalPrice)}</div>
+                        `;
+                        container.appendChild(bookingDiv);
+                    });
+                    
+                    // Update total bookings count
+                    document.getElementById('total-bookings').textContent = response.data.length;
+                } else {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <p>No recent bookings found.</p>
+                            <a href="buses.html" class="btn btn-primary">Book Your First Ticket</a>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Failed to load bookings:', error);
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <p>Unable to load bookings. Please try again later.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Belize Bus Ticket System</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <a href="../index.html"><h1>Belize Bus</h1></a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="login.html">Login</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="auth-page">
+        <div class="auth-container">
+            <div class="auth-card auth-card-large">
+                <div class="auth-header">
+                    <h2>Create Account</h2>
+                    <p>Register to start booking your tickets</p>
+                </div>
+
+                <!-- Error Message -->
+                <div id="auth-error" class="alert alert-error" style="display: none;"></div>
+                
+                <!-- Success Message -->
+                <div id="auth-success" class="alert alert-success" style="display: none;"></div>
+
+                <!-- Registration Form -->
+                <form id="signup-form" class="auth-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="first-name" class="form-label">First Name</label>
+                            <input type="text" id="first-name" name="first-name" class="form-control" 
+                                   placeholder="Enter first name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="last-name" class="form-label">Last Name</label>
+                            <input type="text" id="last-name" name="last-name" class="form-control" 
+                                   placeholder="Enter last name" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="email" id="email" name="email" class="form-control" 
+                               placeholder="Enter your email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone" class="form-label">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" class="form-control" 
+                               placeholder="+501-XXX-XXXX" required>
+                        <small class="form-help">Format: +501-XXX-XXXX</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="address" class="form-label">Address</label>
+                        <textarea id="address" name="address" class="form-control" rows="3" 
+                                  placeholder="Enter your address"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="date-of-birth" class="form-label">Date of Birth (Optional)</label>
+                        <input type="date" id="date-of-birth" name="date-of-birth" class="form-control">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" id="password" name="password" class="form-control" 
+                                   placeholder="Create a password" required minlength="8">
+                            <small class="form-help">Minimum 8 characters</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirm-password" class="form-label">Confirm Password</label>
+                            <input type="password" id="confirm-password" name="confirm-password" class="form-control" 
+                                   placeholder="Confirm your password" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="terms" id="terms" required>
+                            <span>I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">
+                        Create Account
+                    </button>
+                </form>
+
+                <div class="auth-footer">
+                    <p>Already have an account? <a href="login.html">Login here</a></p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Belize Bus</h3>
+                    <p>Your trusted partner for comfortable and reliable bus travel across Belize.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <p>Email: info@belizebus.com</p>
+                    <p>Phone: +501-222-1234</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Belize Bus Ticket System. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/utils.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if already logged in
+            if (Auth.isAuthenticated()) {
+                const redirect = Auth.ROLE_DASHBOARDS[Auth.getUserRole()] || '/dashboard';
+                window.location.href = redirect;
+                return;
+            }
+
+            // Setup signup form handler
+            Auth.handleRegistrationFormSubmit(document.getElementById('signup-form'), function(user) {
+                Utils.showToast('Account created successfully! Welcome aboard.', 'success');
+            });
+
+            // Password strength indicator
+            const passwordInput = document.getElementById('password');
+            const confirmPasswordInput = document.getElementById('confirm-password');
+            
+            passwordInput.addEventListener('input', function() {
+                const result = Utils.validatePassword(this.value);
+                const helpText = this.parentElement.querySelector('.form-help');
+                
+                if (this.value.length > 0) {
+                    if (result.strength === 'weak') {
+                        helpText.textContent = 'Password strength: Weak - Add more character types';
+                        helpText.style.color = '#dc3545';
+                    } else if (result.strength === 'medium') {
+                        helpText.textContent = 'Password strength: Medium';
+                        helpText.style.color = '#ffc107';
+                    } else {
+                        helpText.textContent = 'Password strength: Strong';
+                        helpText.style.color = '#28a745';
+                    }
+                } else {
+                    helpText.textContent = 'Minimum 8 characters';
+                    helpText.style.color = '';
+                }
+            });
+
+            // Password match validation
+            confirmPasswordInput.addEventListener('input', function() {
+                const password = passwordInput.value;
+                const confirm = this.value;
+                
+                if (confirm && password !== confirm) {
+                    this.classList.add('is-invalid');
+                } else {
+                    this.classList.remove('is-invalid');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

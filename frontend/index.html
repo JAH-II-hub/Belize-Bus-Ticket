@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Belize Bus Ticket System - Home</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <a href="index.html"><h1>Belize Bus</h1></a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#home" class="active">Home</a></li>
+                <li><a href="#book-ticket">Book Ticket</a></li>
+                <li><a href="#locations">Locations</a></li>
+                <li><a href="#about">About Us</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li id="auth-nav-item">
+                    <a href="pages/login.html" class="btn-login">Login</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section -->
+        <section id="home" class="hero">
+            <div class="hero-content">
+                <h1>Travel Belize with Comfort</h1>
+                <p>Book your bus tickets online and enjoy hassle-free travel across Belize</p>
+                <div class="hero-buttons">
+                    <a href="#book-ticket" class="btn-primary">Book Now</a>
+                    <a href="pages/signup.html" class="btn-secondary">Register</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Booking Section -->
+        <section id="book-ticket" class="booking-section">
+            <div class="container">
+                <h2>Book Your Ticket</h2>
+                <form id="booking-form" class="booking-form">
+                    <div class="form-group">
+                        <label for="departure">From:</label>
+                        <select id="departure" name="departure" required>
+                            <option value="">Select Departure Location</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="destination">To:</label>
+                        <select id="destination" name="destination" required>
+                            <option value="">Select Destination</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="travel-date">Travel Date:</label>
+                        <input type="date" id="travel-date" name="travel-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="bus-type">Bus Type:</label>
+                        <select id="bus-type" name="bus-type">
+                            <option value="all">All Types</option>
+                            <option value="Regular">Regular</option>
+                            <option value="Express">Express</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="seats">Number of Seats:</label>
+                        <input type="number" id="seats" name="seats" min="1" max="10" value="1" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Search Buses</button>
+                </form>
+
+                <!-- Available Buses -->
+                <div id="bus-results" class="bus-results" style="display: none;">
+                    <h3>Available Buses</h3>
+                    <div id="bus-list" class="bus-list">
+                        <!-- Bus cards will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Locations Section -->
+        <section id="locations" class="locations-section">
+            <div class="container">
+                <h2>Our Locations</h2>
+                <div class="locations-grid">
+                    <div class="location-card">
+                        <h3>Belize City Terminal</h3>
+                        <p>Main terminal serving the largest city in Belize. Connection hub for all routes.</p>
+                        <span class="location-type">Terminal</span>
+                    </div>
+                    <div class="location-card">
+                        <h3>Belmopan Terminal</h3>
+                        <p>Capital city terminal with connections to western and southern routes.</p>
+                        <span class="location-type">Terminal</span>
+                    </div>
+                    <div class="location-card">
+                        <h3>San Ignacio Terminal</h3>
+                        <p>Gateway to western Belize and nearby attractions like Xunantunich.</p>
+                        <span class="location-type">Terminal</span>
+                    </div>
+                    <div class="location-card">
+                        <h3>San Pedro Terminal</h3>
+                        <p>Coastal terminal serving Ambergris Caye and nearby islands.</p>
+                        <span class="location-type">Terminal</span>
+                    </div>
+                    <div class="location-card">
+                        <h3>Dangriga Terminal</h3>
+                        <p>Southern Belize hub connecting to Punta Gorda and coastal towns.</p>
+                        <span class="location-type">Terminal</span>
+                    </div>
+                    <div class="location-card">
+                        <h3>Punta Gorda Terminal</h3>
+                        <p>Southernmost terminal with connections to Guatemala border.</p>
+                        <span class="location-type">Terminal</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="about-section">
+            <div class="container">
+                <h2>About Belize Bus</h2>
+                <div class="about-content">
+                    <div class="about-text">
+                        <p>Belize Bus Ticket System is your trusted partner for comfortable and reliable bus travel across Belize. We connect major cities, towns, and tourist destinations throughout the country.</p>
+                        <p>Our fleet includes both Regular and Express buses, offering various price points and comfort levels to suit your needs. All our buses are well-maintained and operated by experienced drivers committed to your safety.</p>
+                        <h3>Why Choose Us?</h3>
+                        <ul class="features-list">
+                            <li>✓ Reliable schedules and on-time departures</li>
+                            <li>✓ Comfortable seating with ample legroom</li>
+                            <li>✓ Affordable prices for all budgets</li>
+                            <li>✓ Easy online booking system</li>
+                            <li>✓ Multiple payment options</li>
+                            <li>✓ Friendly customer service</li>
+                        </ul>
+                    </div>
+                    <div class="about-stats">
+                        <div class="stat-box">
+                            <span class="stat-number">50+</span>
+                            <span class="stat-label">Daily Departures</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-number">8</span>
+                            <span class="stat-label">Major Terminals</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-number">10K+</span>
+                            <span class="stat-label">Happy Customers</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-number">100%</span>
+                            <span class="stat-label">Safety Record</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="contact-section">
+            <div class="container">
+                <h2>Contact Us</h2>
+                <div class="contact-content">
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <h3>📍 Address</h3>
+                            <p>123 Main Street<br>Belize City, Belize</p>
+                        </div>
+                        <div class="contact-item">
+                            <h3>📞 Phone</h3>
+                            <p>+501-222-1234<br>+501-222-5678</p>
+                        </div>
+                        <div class="contact-item">
+                            <h3>✉️ Email</h3>
+                            <p>info@belizebus.com<br>support@belizebus.com</p>
+                        </div>
+                        <div class="contact-item">
+                            <h3>🕐 Hours</h3>
+                            <p>Monday - Friday: 6:00 AM - 8:00 PM<br>Saturday - Sunday: 7:00 AM - 6:00 PM</p>
+                        </div>
+                    </div>
+                    <div class="contact-form-wrapper">
+                        <h3>Send Us a Message</h3>
+                        <form id="contact-form" class="contact-form">
+                            <div class="form-group">
+                                <label for="contact-name">Your Name:</label>
+                                <input type="text" id="contact-name" name="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="contact-email">Your Email:</label>
+                                <input type="email" id="contact-email" name="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="contact-subject">Subject:</label>
+                                <input type="text" id="contact-subject" name="subject" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="contact-message">Message:</label>
+                                <textarea id="contact-message" name="message" rows="4" required></textarea>
+                            </div>
+                            <button type="submit" class="btn-primary">Send Message</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Belize Bus</h3>
+                    <p>Your trusted partner for comfortable and reliable bus travel across Belize.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#book-ticket">Book Ticket</a></li>
+                        <li><a href="pages/login.html">Login</a></li>
+                        <li><a href="pages/signup.html">Sign Up</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <p>Email: info@belizebus.com</p>
+                    <p>Phone: +501-222-1234</p>
+                    <p>Address: 123 Main Street, Belize City, Belize</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Belize Bus Ticket System. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/components.js"></script>
+    <script>
+        let locations = [];
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Check auth status and update navigation
+            updateAuthNavigation();
+
+            // Set minimum date to tomorrow
+            const minDate = Utils.getMinBookingDate();
+            document.getElementById('travel-date').setAttribute('min', minDate);
+
+            // Load locations
+            await loadLocations();
+
+            // Setup booking form
+            document.getElementById('booking-form').addEventListener('submit', handleBookingSearch);
+
+            // Setup contact form
+            document.getElementById('contact-form').addEventListener('submit', handleContactForm);
+
+            // Smooth scroll for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    const href = this.getAttribute('href');
+                    if (href !== '#') {
+                        e.preventDefault();
+                        const target = document.querySelector(href);
+                        if (target) {
+                            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                    }
+                });
+            });
+        });
+
+        async function loadLocations() {
+            try {
+                const response = await API.location.getAllLocations();
+                if (response.success && response.data) {
+                    locations = response.data.filter(l => l.type === 'Terminal');
+                } else {
+                    // Fallback locations
+                    locations = [
+                        { id: 1, name: 'Belize City Terminal' },
+                        { id: 2, name: 'Belmopan Terminal' },
+                        { id: 3, name: 'San Ignacio Terminal' },
+                        { id: 4, name: 'Orange Walk Terminal' },
+                        { id: 5, name: 'Corozal Terminal' },
+                        { id: 6, name: 'San Pedro Terminal' },
+                        { id: 7, name: 'Dangriga Terminal' },
+                        { id: 8, name: 'Punta Gorda Terminal' }
+                    ];
+                }
+                populateLocationSelects();
+            } catch (error) {
+                console.error('Failed to load locations:', error);
+                // Use fallback
+                locations = [
+                    { id: 1, name: 'Belize City Terminal' },
+                    { id: 2, name: 'Belmopan Terminal' },
+                    { id: 3, name: 'San Ignacio Terminal' },
+                    { id: 4, name: 'Orange Walk Terminal' },
+                    { id: 5, name: 'Corozal Terminal' },
+                    { id: 6, name: 'San Pedro Terminal' },
+                    { id: 7, name: 'Dangriga Terminal' },
+                    { id: 8, name: 'Punta Gorda Terminal' }
+                ];
+                populateLocationSelects();
+            }
+        }
+
+        function populateLocationSelects() {
+            const departureSelect = document.getElementById('departure');
+            const destinationSelect = document.getElementById('destination');
+
+            locations.forEach(location => {
+                const option1 = document.createElement('option');
+                option1.value = location.id;
+                option1.textContent = location.name;
+                departureSelect.appendChild(option1);
+
+                const option2 = document.createElement('option');
+                option2.value = location.id;
+                option2.textContent = location.name;
+                destinationSelect.appendChild(option2);
+            });
+        }
+
+        function updateAuthNavigation() {
+            const user = Auth.getCurrentUser();
+            const authNavItem = document.getElementById('auth-nav-item');
+
+            if (user && Auth.isAuthenticated()) {
+                // User is logged in
+                const dashboardUrl = Auth.ROLE_DASHBOARDS[user.userType] || 'pages/dashboard.html';
+                authNavItem.innerHTML = `
+                    <a href="${dashboardUrl}" class="btn-login">Dashboard</a>
+                `;
+            } else {
+                // User is not logged in
+                authNavItem.innerHTML = `
+                    <a href="pages/login.html" class="btn-login">Login</a>
+                `;
+            }
+        }
+
+        async function handleBookingSearch(e) {
+            e.preventDefault();
+
+            const departure = parseInt(document.getElementById('departure').value);
+            const destination = parseInt(document.getElementById('destination').value);
+            const travelDate = document.getElementById('travel-date').value;
+            const busType = document.getElementById('bus-type').value;
+
+            if (!departure || !destination || !travelDate) {
+                Utils.showToast('Please fill in all required fields', 'error');
+                return;
+            }
+
+            if (departure === destination) {
+                Utils.showToast('Departure and destination must be different', 'error');
+                return;
+            }
+
+            // Show loading state
+            const resultsDiv = document.getElementById('bus-results');
+            const busList = document.getElementById('bus-list');
+            resultsDiv.style.display = 'block';
+            busList.innerHTML = '<div class="loading-state"><div class="loading-spinner"></div><p>Searching for buses...</p></div>';
+
+            try {
+                const response = await API.bus.getAvailableBuses({
+                    from: departure,
+                    to: destination,
+                    date: travelDate,
+                    type: busType
+                });
+
+                if (response.success && response.data && response.data.length > 0) {
+                    displayBusResults(response.data);
+                } else {
+                    busList.innerHTML = '<p class="empty-state">No buses available for the selected criteria. Please try different dates or routes.</p>';
+                }
+            } catch (error) {
+                console.error('Search failed:', error);
+                busList.innerHTML = '<p class="empty-state">Unable to search buses at this time. Please try again later.</p>';
+            }
+        }
+
+        function displayBusResults(buses) {
+            const busList = document.getElementById('bus-list');
+            busList.innerHTML = '';
+
+            const locationsMap = {};
+            locations.forEach(loc => {
+                locationsMap[loc.id] = loc;
+            });
+
+            buses.forEach(bus => {
+                const card = Components.createBusCard(bus, locationsMap, (selectedBus) => {
+                    if (Auth.isAuthenticated()) {
+                        window.location.href = 'pages/buses.html#' + bus.id;
+                    } else {
+                        Utils.showToast('Please login to book a ticket', 'warning');
+                        window.location.href = 'pages/login.html';
+                    }
+                });
+                busList.appendChild(card);
+            });
+        }
+
+        async function handleContactForm(e) {
+            e.preventDefault();
+
+            const formData = new FormData(e.target);
+            const data = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                subject: formData.get('subject'),
+                message: formData.get('message')
+            };
+
+            try {
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                const originalText = submitBtn.textContent;
+                submitBtn.textContent = 'Sending...';
+                submitBtn.disabled = true;
+
+                // Simulate form submission (in production, send to API)
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                Utils.showToast('Message sent successfully! We will get back to you soon.', 'success');
+                e.target.reset();
+
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            } catch (error) {
+                console.error('Contact form error:', error);
+                Utils.showToast('Failed to send message. Please try again.', 'error');
+                
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.textContent = 'Send Message';
+                submitBtn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
